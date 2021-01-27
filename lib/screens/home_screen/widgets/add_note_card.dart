@@ -10,53 +10,89 @@ class AddNoteCard extends StatelessWidget {
 
     final noteProvider = Provider.of<NoteProvider>(context);
 
+    // return Column(
+    //   children: <Widget>[
+    //     SizedBox(
+    //       height: 10,
+    //     ),
+    //     Ink(
+    //       width: double.infinity,
+    //       height: 55,
+    //       decoration: BoxDecoration(
+    //         borderRadius: BorderRadius.circular(10),
+    //         color: Colors.grey.shade300,
+    //       ),
+    //       child: InkWell(
+    //         onTap: () {
+    //           noteProvider.addNote();
+    //         },
+    //         borderRadius: BorderRadius.circular(10),
+    //           child: Padding(
+    //           padding: EdgeInsets.symmetric(
+    //             horizontal: 16,
+    //           ),
+    //           child: Row(
+    //             children: <Widget>[
+    //               Align(
+    //                 alignment: Alignment.center,
+    //                 child: Icon(
+    //                 Icons.add_circle,
+    //                   size: 30,
+    //                 ),
+    //               ),
+    //               SizedBox(
+    //                 width: 20,
+    //               ),
+    //               Align(
+    //                 alignment: Alignment.center,
+    //                 child: Text(
+    //                 "Add a note",
+    //                   style: TextStyle(
+    //                     fontSize: 18,
+    //                     fontFamily: "Poppins",
+    //                     color: Colors.black,
+    //                   ),
+    //                 ),
+    //               ),
+    //             ],
+    //           ),
+    //         ),
+    //       ),
+    //     ),
+    //   ],
+    // );
+
+
+
     return Column(
       children: <Widget>[
         SizedBox(
           height: 10,
         ),
-        Ink(
-          width: double.infinity,
-          height: 55,
-          decoration: BoxDecoration(
+        Card(
+          shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
-            color: Colors.grey.shade300,
           ),
-          child: InkWell(
-            onTap: () {
-              noteProvider.addNote();
-            },
-            borderRadius: BorderRadius.circular(10),
-              child: Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: 16,
-              ),
-              child: Row(
-                children: <Widget>[
-                  Align(
-                    alignment: Alignment.center,
-                    child: Icon(
-                    Icons.add_circle,
-                      size: 30,
-                    ),
-                  ),
-                  SizedBox(
-                    width: 20,
-                  ),
-                  Align(
-                    alignment: Alignment.center,
-                    child: Text(
-                    "Add a note",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontFamily: "Poppins",
-                        color: Colors.black,
-                      ),
-                    ),
-                  ),
-                ],
+          color: Colors.grey.shade300,
+          elevation: 0,
+          child: ListTile(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            leading: Icon(
+              Icons.add_circle,
+              color: Colors.grey.shade900,
+              size: 30,
+            ),
+            title: Text(
+              "Add a note",
+              style: TextStyle(
+                fontSize: 18,
+                fontFamily: "Poppins",
+                color: Colors.black,
               ),
             ),
+            onTap: () => noteProvider.addNote(),
           ),
         ),
       ],

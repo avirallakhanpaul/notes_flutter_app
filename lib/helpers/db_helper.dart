@@ -16,7 +16,8 @@ class DBHelper {
             Create Table $tableName(
               id text primary key,
               title text,
-              desc text
+              desc text,
+              color int(10)
             )
           '''
         );

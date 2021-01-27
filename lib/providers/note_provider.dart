@@ -1,11 +1,25 @@
-import "package:flutter/material.dart";
-import 'package:notes_app/helpers/db_helper.dart';
+import 'dart:math';
 
+import "package:flutter/material.dart";
+
+import '../helpers/db_helper.dart';
 import '../models/note.dart';
+
+// enum NoteColors {
+//   blue,
+//   darkBlue,
+//   red,
+//   yellow,
+//   orange,
+//   green,
+//   darkGreen,
+//   purple,
+// }
 
 class NoteProvider with ChangeNotifier {
 
-  int noteCount = 3;
+  int noteColor;
+  var random = Random();
 
   List<Note> _items = [];
   
@@ -13,26 +27,65 @@ class NoteProvider with ChangeNotifier {
     return [..._items];
   }
 
-  void addNote({String noteTitle = "Title", String noteDesc = "Description..."}) {
+  void addNote({int index, Note deletedNote, String noteTitle = "Title", String noteDesc = "Description..."}) {
+
+    switch(random.nextInt(9)) {
+
+      case 1: noteColor = 0xFF2980b9;
+        break;
+      case 2: noteColor = 0xFF2c3e50;
+        break;
+      case 3: noteColor = 0xFFc0392b;
+        break;
+      case 4: noteColor = 0xFFf1c40f;
+        break;
+      case 5: noteColor = 0xFFf39c12;
+        break;
+      case 6: noteColor = 0xFF27ae60;
+        break;
+      case 7: noteColor = 0xFF16a085;
+        break;
+      case 8: noteColor = 0xFF8e44ad;
+        break;
+    }
     
     final newNote = Note(
       id: DateTime.now().toString(),
       title: noteTitle,
       desc: noteDesc,
+      color: noteColor,
     );
 
-    _items.add(newNote);
+    if(index != null) {
+      _items.insert(index, deletedNote);
+    } else {
+      _items.add(newNote);
+    }
+
 
     notifyListeners();
 
-    DBHelper.insertToDb(
-      "user_notes", 
-      {
-        "id": newNote.id,
-        "title": newNote.title,
-        "desc": newNote.desc,
-      },
-    );
+    if(index != null) {
+      DBHelper.insertToDb(
+        "user_notes", 
+        {
+          "id": deletedNote.id,
+          "title": deletedNote.title,
+          "desc": deletedNote.desc,
+          "color": deletedNote.color,
+        },
+      );
+    } else {
+      DBHelper.insertToDb(
+        "user_notes", 
+        {
+          "id": newNote.id,
+          "title": newNote.title,
+          "desc": newNote.desc,
+          "color": noteColor,
+        },
+      );
+    }
   }
 
   Future<void> fetchOrSetNotes() async {
@@ -44,6 +97,7 @@ class NoteProvider with ChangeNotifier {
         id: item["id"],
         title: item["title"],
         desc: item["desc"],
+        color: item["color"],
       );
     }).toList();
 
@@ -94,7 +148,7 @@ class NoteProvider with ChangeNotifier {
       whereArgs: [id],
     );
 
-    // fetchOrSetNotes();
+    fetchOrSetNotes();
     notifyListeners();
   }
 

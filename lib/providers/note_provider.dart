@@ -54,7 +54,6 @@ class NoteProvider with ChangeNotifier {
       _items.add(newNote);
 
       final lastNoteIndex = _items.length - 1;
-      // final lastNoteColor = noteProvider.items[lastNoteIndex].color;
 
       Navigator.of(context).pushNamed(
         NoteScreen.routeName,
@@ -145,7 +144,7 @@ class NoteProvider with ChangeNotifier {
 
     final database = await DBHelper.database(tableName);
 
-    database.delete(
+    await database.delete(
       tableName,
       where: "id = ?",
       whereArgs: [id],

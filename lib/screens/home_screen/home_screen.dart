@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import 'package:notes_app/common_widgtes/delete_alert_dialog.dart';
 import 'package:notes_app/providers/note_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -70,7 +71,6 @@ class HomeScreen extends StatelessWidget {
           return SingleChildScrollView(
             child: Padding(
               padding: EdgeInsets.symmetric(
-                // vertical: 15,
                 horizontal: 15,
               ),
               child: Column(
@@ -81,6 +81,7 @@ class HomeScreen extends StatelessWidget {
                   FutureBuilder(
                     future: Provider.of<NoteProvider>(context, listen: false).fetchOrSetNotes(),
                     builder: (ctx, snapshot) {
+                      print(snapshot.connectionState);
                       return snapshot.connectionState == ConnectionState.waiting
                       ? Center(
                         child: CircularProgressIndicator(),
@@ -93,6 +94,7 @@ class HomeScreen extends StatelessWidget {
                             shrinkWrap: true,
                             physics: NeverScrollableScrollPhysics(),
                             itemBuilder: (ctx, index) {
+                              print(snapshot.data);
                               return Column(
                                 children: <Widget>[
                                   Dismissible(
@@ -116,6 +118,18 @@ class HomeScreen extends StatelessWidget {
                                       ),
                                     ),
                                     direction: DismissDirection.endToStart,
+                                    confirmDismiss: (direction) async {
+
+                                      final delAlertDialog = DeleteAlertDialog(
+                                        noteIndex: index,
+                                        fromNoteScreen: false,
+                                      );
+
+                                      return await showDialog(
+                                        context: context,
+                                        builder: (context) => delAlertDialog,
+                                      );
+                                    },
                                     onDismissed: (direction) {
 
                                       Scaffold.of(ctx).removeCurrentSnackBar();
@@ -127,7 +141,7 @@ class HomeScreen extends StatelessWidget {
                                         id: note.items[index].id,
                                       );
 
-                                      return Scaffold.of(ctx).      showSnackBar(
+                                      return Scaffold.of(ctx).showSnackBar(
                                         SnackBar(
                                           content: Text(
                                             "Note Deleted",

@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
 import 'package:provider/provider.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import "../../providers/note_provider.dart";
 import "../../helpers/arguments.dart";
@@ -20,6 +21,8 @@ class _NoteScreenState extends State<NoteScreen> {
   final titleController = TextEditingController();
   final descController = TextEditingController();
 
+  bool isLoading = false;
+
   @override
   void dispose() {
     titleController.dispose();
@@ -38,32 +41,40 @@ class _NoteScreenState extends State<NoteScreen> {
 
     final initialTitleValue = titleController.text;
     final initialDescValue = descController.text;
-    // print("intial Title -> $initialTitleValue");
-    // print("initial Desc -> $initialDescValue");
 
-    void popupMenuAction(optSelected) {
+    void popupMenuAction(optSelected) async {
 
       if(optSelected == PopupOptions.delete) {
         
-        final DeleteAlertDialog delAlertDialog = DeleteAlertDialog(noteArgs.index);
+        final DeleteAlertDialog delAlertDialog = DeleteAlertDialog(
+          noteIndex: noteArgs.index,
+          fromNoteScreen: true,
+        );
 
-        showDialog(
+        print(optSelected);
+
+        setState(() {
+          isLoading = true;        
+        });
+
+        await showDialog(
           context: context,
           builder: (BuildContext context) {
             return delAlertDialog;
           },
         );
+
+        setState(() {
+          isLoading = false;        
+        });
+
+        Navigator.of(context).pop();
       } else {
         return null;
       }
     }
 
     void saveNote() {
-
-      print("intial Title -> $initialTitleValue");
-      print("initial Desc -> $initialDescValue");
-
-      print("descController -> ${descController.text}");
 
       if((titleController.text == initialTitleValue) && (descController.text != initialDescValue)) {
         
@@ -95,6 +106,13 @@ class _NoteScreenState extends State<NoteScreen> {
       } else {
         return;
       }
+
+      Fluttertoast.showToast(
+        msg: "Note Saved",
+        fontSize: 16,
+        gravity: ToastGravity.SNACKBAR,
+        toastLength: Toast.LENGTH_SHORT,
+      );
     }
 
     return WillPopScope(
@@ -158,7 +176,10 @@ class _NoteScreenState extends State<NoteScreen> {
             ),
           ],
         ),
-        body: ListView(
+        body: isLoading == true 
+        ? Center(
+          child: CircularProgressIndicator(),
+        ) : ListView(
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.symmetric(

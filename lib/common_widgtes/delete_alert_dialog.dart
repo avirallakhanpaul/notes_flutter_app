@@ -7,13 +7,16 @@ import "../screens/home_screen/home_screen.dart";
 class DeleteAlertDialog extends StatelessWidget {
 
   final int noteIndex;
+  final bool fromNoteScreen;
 
-  DeleteAlertDialog(this.noteIndex);
+  DeleteAlertDialog({this.noteIndex, this.fromNoteScreen});
 
   @override
   AlertDialog build(BuildContext context) {
 
     final noteProvider = Provider.of<NoteProvider>(context);
+
+    print("ALERT");
 
     return AlertDialog(
       title: Text(
@@ -34,13 +37,18 @@ class DeleteAlertDialog extends StatelessWidget {
       ),
       actions: [
         RaisedButton(
-          onPressed: () async {
-            await noteProvider.deleteNote(
-              tableName: "user_notes",
-              id: noteProvider.items[noteIndex].id,
-            );
-            // Navigator.of(context).pop();
-            Navigator.of(context).pushNamed(HomeScreen.routeName);
+          onPressed: () => {
+
+            if(fromNoteScreen) {
+
+              noteProvider.deleteNote(
+                tableName: "user_notes",
+                id: noteProvider.items[noteIndex].id,
+              ),
+              Navigator.of(context).pop(),
+            } else {
+              Navigator.of(context).pop(true),
+            }
           },
           color: Colors.red.shade700,
           child: Text(
@@ -53,7 +61,7 @@ class DeleteAlertDialog extends StatelessWidget {
           ),
         ),
         FlatButton(
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () => Navigator.of(context).pop(false),
           splashColor: Colors.grey.shade300,
           child: Text(
             "Cancel",

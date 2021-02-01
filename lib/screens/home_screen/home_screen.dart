@@ -27,13 +27,28 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: Text("Notes",
-        style: TextStyle(
-          fontSize: 24,
-          fontFamily: "Poppins",
-          color: Colors.black,
-          // fontWeight: FontWeight.w100,
-        )),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text("Just",
+              style: TextStyle(
+                fontSize: 24,
+                fontFamily: "Poppins",
+                color: Colors.black,
+                // fontWeight: FontWeight.w100,
+              ),
+            ),
+            Text(
+              "Notes",
+              style: TextStyle(
+                fontFamily: "Poppins",
+                fontWeight: FontWeight.w700,
+                fontSize: 24,
+                color: Colors.blue.shade700,
+              ),
+            ),
+          ],
+        ),
         actions: [
           IconButton(
             icon: Icon(

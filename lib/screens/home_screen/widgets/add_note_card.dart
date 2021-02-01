@@ -19,7 +19,7 @@ class AddNoteCard extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
-          color: Colors.grey.shade300,
+          color: Colors.grey.shade200,
           elevation: 0,
           child: ListTile(
             shape: RoundedRectangleBorder(

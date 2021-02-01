@@ -1,8 +1,9 @@
 import "package:flutter/material.dart";
 import 'package:provider/provider.dart';
 
-import '../../providers/note_provider.dart';
-import '../../helpers/arguments.dart';
+import "../../providers/note_provider.dart";
+import "../../helpers/arguments.dart";
+import "../../common_widgtes/delete_alert_dialog.dart";
 
 enum PopupOptions { delete }
 
@@ -43,12 +44,17 @@ class _NoteScreenState extends State<NoteScreen> {
     void popupMenuAction(optSelected) {
 
       if(optSelected == PopupOptions.delete) {
-        noteProvider.deleteNote(
-          tableName: "user_notes",
-          id: noteProvider.items[noteArgs.index].id,
-        );
+        
+        final DeleteAlertDialog delAlertDialog = DeleteAlertDialog(noteArgs.index);
 
-        Navigator.of(context).pop();
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return delAlertDialog;
+          },
+        );
+      } else {
+        return null;
       }
     }
 
@@ -106,11 +112,11 @@ class _NoteScreenState extends State<NoteScreen> {
                   color: Colors.white,
                   fontSize: 18,
                   fontFamily: "Poppins",
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w500,
                 ),
                 controller: titleController,
                 decoration: InputDecoration(
-                  hintText: "Title",
+                  // hintText: "Title",
                   // hintStyle: TextStyle(),
                   fillColor: Colors.white,
                   border: InputBorder.none,
@@ -142,7 +148,7 @@ class _NoteScreenState extends State<NoteScreen> {
                         Icons.delete,
                         color: Colors.red,
                       ),
-                      title: Text(
+                      title: const Text(
                         "Delete",
                       ),
                     ),
@@ -164,7 +170,7 @@ class _NoteScreenState extends State<NoteScreen> {
                 controller: descController,
                 decoration: InputDecoration(
                   border: InputBorder.none,
-                  hintText: "Description..",
+                  hintText: "Description",
                   hintStyle: TextStyle(
                     fontSize: 18,
                     fontFamily: "Poppins",

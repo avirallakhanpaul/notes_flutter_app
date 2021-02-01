@@ -53,8 +53,6 @@ class NoteProvider with ChangeNotifier {
 
       _items.add(newNote);
 
-      notifyListeners();
-
       final lastNoteIndex = _items.length - 1;
       // final lastNoteColor = noteProvider.items[lastNoteIndex].color;
 
@@ -64,7 +62,7 @@ class NoteProvider with ChangeNotifier {
       );
     }
 
-    
+    notifyListeners();
 
     if(index != null) { // UNDO Operation
       DBHelper.insertToDb(

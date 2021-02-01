@@ -26,10 +26,12 @@ class HomeScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: Text("Notes",
         style: TextStyle(
           fontSize: 24,
           fontFamily: "Poppins",
+          color: Colors.black,
           // fontWeight: FontWeight.w100,
         )),
         actions: [
@@ -37,9 +39,10 @@ class HomeScreen extends StatelessWidget {
             icon: Icon(
               Icons.add,
               size: 30,
+              color: Colors.black,
             ),
             onPressed: () {
-              Provider.of<NoteProvider>(context, listen: false).addNote();
+              Provider.of<NoteProvider>(context, listen: false).addNote(context: context);
             },
           ),
         ],
@@ -52,6 +55,7 @@ class HomeScreen extends StatelessWidget {
           return SingleChildScrollView(
             child: Padding(
               padding: EdgeInsets.symmetric(
+                // vertical: 15,
                 horizontal: 15,
               ),
               child: Column(
@@ -67,17 +71,13 @@ class HomeScreen extends StatelessWidget {
                         child: CircularProgressIndicator(),
                       )
                       : Consumer<NoteProvider>(
-                        child: Center(
-                          child: const Text("No notes found :("),
-                        ),
                         builder: (ctx, note, child) => note.items.length <= 0
-                          ? child 
+                          ? Container()
                           : ListView.builder(
                             itemCount: note.items.length,
                             shrinkWrap: true,
                             physics: NeverScrollableScrollPhysics(),
-                            // scrollDirection: Axis.vertical,
-                            itemBuilder: (ctx, index) { 
+                            itemBuilder: (ctx, index) {
                               return Column(
                                 children: <Widget>[
                                   Dismissible(
@@ -121,6 +121,7 @@ class HomeScreen extends StatelessWidget {
                                               fontFamily: "Poppins",
                                             ),
                                           ),
+                                          duration: Duration(seconds: 3),
                                           backgroundColor: Colors.red.shade900,
                                           action: SnackBarAction(
                                             label: "Undo",

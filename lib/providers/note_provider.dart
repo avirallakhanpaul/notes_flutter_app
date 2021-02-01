@@ -3,18 +3,9 @@ import 'dart:math';
 import "package:flutter/material.dart";
 
 import '../helpers/db_helper.dart';
+import '../helpers/arguments.dart';
 import '../models/note.dart';
-
-// enum NoteColors {
-//   blue,
-//   darkBlue,
-//   red,
-//   yellow,
-//   orange,
-//   green,
-//   darkGreen,
-//   purple,
-// }
+import '../screens/note_screen/note_screen.dart';
 
 class NoteProvider with ChangeNotifier {
 
@@ -27,7 +18,7 @@ class NoteProvider with ChangeNotifier {
     return [..._items];
   }
 
-  void addNote({int index, Note deletedNote, String noteTitle = "Title", String noteDesc = "Description..."}) {
+  void addNote({BuildContext context, int index, Note deletedNote, String noteTitle = "Title", String noteDesc = ""}) {
 
     switch(random.nextInt(9)) {
 
@@ -56,16 +47,26 @@ class NoteProvider with ChangeNotifier {
       color: noteColor,
     );
 
-    if(index != null) {
+    if(index != null) { // UNDO Operation
       _items.insert(index, deletedNote);
     } else {
+
       _items.add(newNote);
+
+      notifyListeners();
+
+      final lastNoteIndex = _items.length - 1;
+      // final lastNoteColor = noteProvider.items[lastNoteIndex].color;
+
+      Navigator.of(context).pushNamed(
+        NoteScreen.routeName,
+        arguments: Args(lastNoteIndex, newNote.color),
+      );
     }
 
+    
 
-    notifyListeners();
-
-    if(index != null) {
+    if(index != null) { // UNDO Operation
       DBHelper.insertToDb(
         "user_notes", 
         {
@@ -108,6 +109,10 @@ class NoteProvider with ChangeNotifier {
 
     final database = await DBHelper.database(tableName);
 
+    if(newTitle == "" || newTitle.isEmpty) {
+      newTitle = "Title";
+    }
+
     database.update(
       tableName,
       {
@@ -117,7 +122,7 @@ class NoteProvider with ChangeNotifier {
       whereArgs: [id],
     );
 
-    fetchOrSetNotes();
+    await fetchOrSetNotes();
     notifyListeners();
   }
 
@@ -134,7 +139,7 @@ class NoteProvider with ChangeNotifier {
       whereArgs: [id],
     );
 
-    fetchOrSetNotes();
+    await fetchOrSetNotes();
     notifyListeners();
   }
 
@@ -148,7 +153,7 @@ class NoteProvider with ChangeNotifier {
       whereArgs: [id],
     );
 
-    fetchOrSetNotes();
+    await fetchOrSetNotes();
     notifyListeners();
   }
 

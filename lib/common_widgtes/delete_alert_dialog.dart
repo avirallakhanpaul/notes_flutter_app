@@ -16,8 +16,6 @@ class DeleteAlertDialog extends StatelessWidget {
 
     final noteProvider = Provider.of<NoteProvider>(context);
 
-    print("ALERT");
-
     return AlertDialog(
       title: Text(
         "Delete?",
@@ -37,14 +35,17 @@ class DeleteAlertDialog extends StatelessWidget {
       ),
       actions: [
         RaisedButton(
-          onPressed: () => {
+          onPressed: () async => {
 
             if(fromNoteScreen) {
 
-              noteProvider.deleteNote(
+              Navigator.of(context).pop(),
+
+              await noteProvider.deleteNote(
                 tableName: "user_notes",
                 id: noteProvider.items[noteIndex].id,
               ),
+
               Navigator.of(context).pop(),
             } else {
               Navigator.of(context).pop(true),

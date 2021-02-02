@@ -151,7 +151,7 @@ class NoteProvider with ChangeNotifier {
     );
 
     await fetchOrSetNotes();
-    notifyListeners();
+    // notifyListeners();
   }
 
   Note getNoteById(String id) {

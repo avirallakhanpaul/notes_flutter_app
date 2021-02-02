@@ -13,30 +13,17 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    // final snackBar = SnackBar(
-    //   content: Text(
-    //     "Note Deleted",
-    //     style: TextStyle(
-    //       fontSize: 16,
-    //       fontFamily: "Poppins",
-    //       // fontWeight: FontWeight.
-    //     ),
-    //   ),
-    //   backgroundColor: Colors.red.shade900,
-    // );
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text("Just",
+            const Text("Just",
               style: TextStyle(
                 fontSize: 24,
                 fontFamily: "Poppins",
                 color: Colors.black,
-                // fontWeight: FontWeight.w100,
               ),
             ),
             Text(
@@ -70,7 +57,7 @@ class HomeScreen extends StatelessWidget {
         builder: (ctx) {
           return SingleChildScrollView(
             child: Padding(
-              padding: EdgeInsets.symmetric(
+              padding: const EdgeInsets.symmetric(
                 horizontal: 15,
               ),
               child: Column(
@@ -81,7 +68,6 @@ class HomeScreen extends StatelessWidget {
                   FutureBuilder(
                     future: Provider.of<NoteProvider>(context, listen: false).fetchOrSetNotes(),
                     builder: (ctx, snapshot) {
-                      print(snapshot.connectionState);
                       return snapshot.connectionState == ConnectionState.waiting
                       ? Center(
                         child: CircularProgressIndicator(),
@@ -94,7 +80,6 @@ class HomeScreen extends StatelessWidget {
                             shrinkWrap: true,
                             physics: NeverScrollableScrollPhysics(),
                             itemBuilder: (ctx, index) {
-                              print(snapshot.data);
                               return Column(
                                 children: <Widget>[
                                   Dismissible(

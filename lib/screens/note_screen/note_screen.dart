@@ -21,8 +21,6 @@ class _NoteScreenState extends State<NoteScreen> {
   final titleController = TextEditingController();
   final descController = TextEditingController();
 
-  bool isLoading = false;
-
   @override
   void dispose() {
     titleController.dispose();
@@ -51,12 +49,6 @@ class _NoteScreenState extends State<NoteScreen> {
           fromNoteScreen: true,
         );
 
-        print(optSelected);
-
-        setState(() {
-          isLoading = true;        
-        });
-
         await showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -64,11 +56,7 @@ class _NoteScreenState extends State<NoteScreen> {
           },
         );
 
-        setState(() {
-          isLoading = false;        
-        });
-
-        Navigator.of(context).pop();
+        print("After Deletion");
       } else {
         return null;
       }
@@ -176,10 +164,7 @@ class _NoteScreenState extends State<NoteScreen> {
             ),
           ],
         ),
-        body: isLoading == true 
-        ? Center(
-          child: CircularProgressIndicator(),
-        ) : ListView(
+        body: ListView(
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.symmetric(

@@ -26,6 +26,9 @@ class HomeScreen extends StatelessWidget {
                 color: Colors.black,
               ),
             ),
+            SizedBox(
+              width: 2,
+            ),
             Text(
               "Notes",
               style: TextStyle(

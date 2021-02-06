@@ -111,6 +111,13 @@ class _NoteScreenState extends State<NoteScreen> {
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Color(noteArgs.color),
+          leading: IconButton(
+            icon: Icon(
+              Icons.arrow_back_ios,
+              size: 20,
+            ),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
           title: Consumer<NoteProvider>(
             builder: (ctx, note, child) {
               return TextField(
@@ -137,7 +144,10 @@ class _NoteScreenState extends State<NoteScreen> {
                 Icons.done,
                 color: Colors.white,
               ),
-              onPressed: () => saveNote(),
+              onPressed: () {
+                saveNote();
+                Navigator.of(context).pop();
+              }
             ),
             PopupMenuButton<PopupOptions>(
               icon: Icon(

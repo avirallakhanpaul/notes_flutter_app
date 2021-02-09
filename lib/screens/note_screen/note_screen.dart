@@ -56,7 +56,7 @@ class _NoteScreenState extends State<NoteScreen> {
           },
         );
 
-        print("After Deletion");
+        // print("After Deletion");
       } else {
         return null;
       }
@@ -116,7 +116,10 @@ class _NoteScreenState extends State<NoteScreen> {
               Icons.arrow_back_ios,
               size: 20,
             ),
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () => {
+              saveNote(),
+              Navigator.of(context).pop(),
+            }
           ),
           title: Consumer<NoteProvider>(
             builder: (ctx, note, child) {

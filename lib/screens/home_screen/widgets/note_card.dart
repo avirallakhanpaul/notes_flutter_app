@@ -19,6 +19,9 @@ class NoteCard extends StatelessWidget {
     final noteId = noteProvider.items[index].id;
     final note = noteProvider.getNoteById(noteId);
 
+    // print(noteId);
+    // print(note);
+
     return Card(
       key: Key(index.toString()),
       color: Color(note.color),

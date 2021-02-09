@@ -1,6 +1,9 @@
 import 'dart:math';
 
 import "package:flutter/material.dart";
+import 'package:notes_app/providers/theme_provider.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../helpers/db_helper.dart';
 import '../helpers/arguments.dart';
@@ -18,25 +21,29 @@ class NoteProvider with ChangeNotifier {
     return [..._items];
   }
 
+  bool isDarkMode;
+
   void addNote({BuildContext context, int index, Note deletedNote, String noteTitle = "Title", String noteDesc = ""}) {
 
-    switch(random.nextInt(9)) {
+    print("isDarkMode(NoteProv): $isDarkMode");
 
-      case 1: noteColor = 0xFF2980b9;
+    switch(random.nextInt(8)) {
+
+      case 0: noteColor = isDarkMode ? 0xFF64B5F6 : 0xFF2196F3;
         break;
-      case 2: noteColor = 0xFF2c3e50;
+      case 1: noteColor = isDarkMode ? 0xFF78909C : 0xFF2C3E50;
         break;
-      case 3: noteColor = 0xFFc0392b;
+      case 2: noteColor = isDarkMode ? 0xFFEF5350 : 0xFFE53935;
         break;
-      case 4: noteColor = 0xFFf1c40f;
+      case 3: noteColor = isDarkMode ? 0xFFFFCA28 : 0xFFF1C40F;
         break;
-      case 5: noteColor = 0xFFf39c12;
+      case 4: noteColor = isDarkMode ? 0xFFFFA726 : 0xFFFF9800;
         break;
-      case 6: noteColor = 0xFF27ae60;
+      case 5: noteColor = isDarkMode ? 0xFF66BB6A : 0xFF4CAF50;
         break;
-      case 7: noteColor = 0xFF16a085;
+      case 6: noteColor = isDarkMode ? 0xFF9CCC65 : 0xFF16A085;
         break;
-      case 8: noteColor = 0xFF8e44ad;
+      case 7: noteColor = isDarkMode ? 0xFFBA68C8 : 0xFF8E44AD;
         break;
     }
     

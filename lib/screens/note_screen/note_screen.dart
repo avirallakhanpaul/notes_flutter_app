@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import 'package:notes_app/providers/theme_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -108,104 +109,120 @@ class _NoteScreenState extends State<NoteScreen> {
         saveNote();
         return true;
       },
-      child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Color(noteArgs.color),
-          leading: IconButton(
-            icon: Icon(
-              Icons.arrow_back_ios,
-              size: 20,
-            ),
-            onPressed: () => {
-              saveNote(),
-              Navigator.of(context).pop(),
-            }
-          ),
-          title: Consumer<NoteProvider>(
-            builder: (ctx, note, child) {
-              return TextField(
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontFamily: "Poppins",
-                  fontWeight: FontWeight.w500,
+      child: Consumer<ThemeProvider>(
+        builder: (ctx, theme, child) {
+          return Scaffold(
+            appBar: AppBar(
+              backgroundColor: Color(noteArgs.color),
+              leading: IconButton(
+                icon: Icon(
+                  Icons.arrow_back_ios,
+                  size: 20,
+                  color: Colors.white
                 ),
-                controller: titleController,
-                decoration: InputDecoration(
-                  // hintText: "Title",
-                  // hintStyle: TextStyle(),
-                  fillColor: Colors.white,
-                  border: InputBorder.none,
+                onPressed: () => {
+                  saveNote(),
+                  Navigator.of(context).pop(),
+                }
+              ),
+              title: Consumer<NoteProvider>(
+                builder: (ctx, note, child) {
+                  return TextField(
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontFamily: "Poppins",
+                      fontWeight: FontWeight.w500,
+                    ),
+                    controller: titleController,
+                    decoration: InputDecoration(
+                      // hintText: "Title",
+                      // hintStyle: TextStyle(),
+                      fillColor: Colors.white,
+                      border: InputBorder.none,
+                    ),
+                  );
+                }
+              ),
+              elevation: 0,
+              actions: [
+                IconButton(
+                  icon: Icon(
+                    Icons.done,
+                    color: Colors.white,
+                  ),
+                  onPressed: () {
+                    saveNote();
+                    Navigator.of(context).pop();
+                  }
                 ),
-              );
-            }
-          ),
-          elevation: 0,
-          actions: [
-            IconButton(
-              icon: Icon(
-                Icons.done,
-                color: Colors.white,
-              ),
-              onPressed: () {
-                saveNote();
-                Navigator.of(context).pop();
-              }
-            ),
-            PopupMenuButton<PopupOptions>(
-              icon: Icon(
-                Icons.more_vert,
-                color: Colors.white,
-              ),
-              onSelected: popupMenuAction,
-              itemBuilder: (ctx) {
-                return <PopupMenuEntry<PopupOptions>>[
-                  const PopupMenuItem<PopupOptions>(
-                    value: PopupOptions.delete,
-                    child: ListTile(
-                      leading: Icon(
-                        Icons.delete,
-                        color: Colors.red,
+                PopupMenuButton<PopupOptions>(
+                  icon: Icon(
+                    Icons.more_vert,
+                    color: Colors.white,
+                  ),
+                  onSelected: popupMenuAction,
+                  itemBuilder: (ctx) {
+                    return <PopupMenuEntry<PopupOptions>>[
+                      const PopupMenuItem<PopupOptions>(
+                        value: PopupOptions.delete,
+                        child: ListTile(
+                          leading: Icon(
+                            Icons.delete,
+                            color: Colors.red,
+                          ),
+                          title: const Text(
+                            "Delete",
+                          ),
+                        ),
                       ),
-                      title: const Text(
-                        "Delete",
+                    ];
+                  }
+                ),
+              ],
+            ),
+            body: Container(
+              decoration: BoxDecoration(
+                color: theme.isDarkTheme
+                ? Color(0xFF121212)
+                : Colors.white,
+              ),
+              child: ListView(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 15.0,
+                      vertical: 10.0,
+                    ),
+                    child: TextField(
+                      maxLines: null,
+                      controller: descController,
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: "Description",
+                        hintStyle: TextStyle(
+                          fontSize: 18,
+                          fontFamily: "Poppins",
+                          color: theme.isDarkTheme
+                          ? Colors.grey.shade700
+                          : Colors.grey.shade500,
+                        ),
+                      ),
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontFamily: "Poppins",
+                        color: theme.isDarkTheme
+                        ? Colors.white.withOpacity(0.9)
+                        : Colors.black,
+                        letterSpacing: 0.05,
                       ),
                     ),
                   ),
-                ];
-              }
-            ),
-          ],
-        ),
-        body: ListView(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 15.0,
-                vertical: 10.0,
-              ),
-              child: TextField(
-                maxLines: null,
-                controller: descController,
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  hintText: "Description",
-                  hintStyle: TextStyle(
-                    fontSize: 18,
-                    fontFamily: "Poppins",
-                    color: Colors.grey.shade500,
-                  ),
-                ),
-                style: TextStyle(
-                  fontSize: 18,
-                  fontFamily: "Poppins",
-                  color: Colors.black,
-                  letterSpacing: 0.05,
-                ),
+                ],
               ),
             ),
-          ],
-        ),
+          );
+        }
       ),
     );
   }

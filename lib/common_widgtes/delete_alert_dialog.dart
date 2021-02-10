@@ -1,8 +1,8 @@
 import "package:flutter/material.dart";
+import 'package:notes_app/providers/theme_provider.dart';
 import "package:provider/provider.dart";
 
 import "../providers/note_provider.dart";
-import "../screens/home_screen/home_screen.dart";
 
 class DeleteAlertDialog extends StatelessWidget {
 
@@ -12,68 +12,81 @@ class DeleteAlertDialog extends StatelessWidget {
   DeleteAlertDialog({this.noteIndex, this.fromNoteScreen});
 
   @override
-  AlertDialog build(BuildContext context) {
+  Widget build(BuildContext context) {
 
     final noteProvider = Provider.of<NoteProvider>(context);
 
-    return AlertDialog(
-      title: Text(
-        "Delete?",
-        style: TextStyle(
-          fontFamily: "Poppins",
-          fontSize: 20,
-          color: Colors.black,
-        ),
-      ),
-      content: Text(
-        "Remove ${noteProvider.items[noteIndex].title} permanently?",
-        style: TextStyle(
-          fontFamily: "Poppins",
-          fontSize: 16,
-          color: Colors.black,
-        ),
-      ),
-      actions: [
-        RaisedButton(
-          onPressed: () async => {
+    return Consumer<ThemeProvider>(
+      builder: (ctx, theme, child) {
+        return AlertDialog(
+          backgroundColor: theme.isDarkTheme
+          ? Color(0xFF424242)
+          : Colors.white,
+          title: Text(
+            "Delete?",
+            style: TextStyle(
+              fontFamily: "Poppins",
+              fontSize: 20,
+              color: theme.isDarkTheme
+              ? Colors.white 
+              : Colors.black,
+            ),
+          ),
+          content: Text(
+            "Remove ${noteProvider.items[noteIndex].title} permanently?",
+            style: TextStyle(
+              fontFamily: "Poppins",
+              fontSize: 16,
+              color: theme.isDarkTheme
+              ? Colors.white 
+              : Colors.black,
+            ),
+          ),
+          actions: [
+            RaisedButton(
+              onPressed: () async => {
+                if(fromNoteScreen) {
+                  Navigator.of(context).pop(),
 
-            if(fromNoteScreen) {
+                  await noteProvider.deleteNote(
+                    tableName: "user_notes",
+                    id: noteProvider.items[noteIndex].id,
+                  ),
 
-              Navigator.of(context).pop(),
-
-              await noteProvider.deleteNote(
-                tableName: "user_notes",
-                id: noteProvider.items[noteIndex].id,
+                  Navigator.of(context).pop(),
+                } else {
+                  Navigator.of(context).pop(true),
+                }
+              },
+              color: theme.isDarkTheme
+              ? Color(0xFFf44336)
+              : Colors.red.shade700,
+              child: Text(
+                "Delete",
+                style: TextStyle(
+                  fontFamily: "Poppins",
+                  fontSize: 14,
+                  color: Colors.white,
+                ),
               ),
-
-              Navigator.of(context).pop(),
-            } else {
-              Navigator.of(context).pop(true),
-            }
-          },
-          color: Colors.red.shade700,
-          child: Text(
-            "Delete",
-            style: TextStyle(
-              fontFamily: "Poppins",
-              fontSize: 14,
-              color: Colors.white,
             ),
-          ),
-        ),
-        FlatButton(
-          onPressed: () => Navigator.of(context).pop(false),
-          splashColor: Colors.grey.shade300,
-          child: Text(
-            "Cancel",
-            style: TextStyle(
-              fontFamily: "Poppins",
-              fontSize: 14,
-              color: Colors.black,
+            FlatButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              splashColor: Colors.grey.shade300,
+              child: Text(
+                "Cancel",
+                style: TextStyle(
+                  fontFamily: "Poppins",
+                  fontSize: 14,
+                  color: theme.isDarkTheme
+                  ? Colors.white
+                  : Colors.black,
+                ),
+              ),
             ),
-          ),
-        ),
-      ],
+          ],
+        );
+      }
     );
   }
 }

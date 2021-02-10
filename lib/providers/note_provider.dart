@@ -12,7 +12,7 @@ import '../screens/note_screen/note_screen.dart';
 
 class NoteProvider with ChangeNotifier {
 
-  int noteColor;
+  int noteLightColor, noteDarkColor;
   var random = Random();
 
   List<Note> _items = [];
@@ -29,21 +29,37 @@ class NoteProvider with ChangeNotifier {
 
     switch(random.nextInt(8)) {
 
-      case 0: noteColor = isDarkMode ? 0xFF64B5F6 : 0xFF2196F3;
+      case 0: 
+      noteLightColor = 0xFF2196F3;
+      noteDarkColor = 0xFF64B5F6;
         break;
-      case 1: noteColor = isDarkMode ? 0xFF78909C : 0xFF2C3E50;
+      case 1: 
+      noteLightColor = 0xFF2C3E50;
+      noteDarkColor = 0xFF78909C;
         break;
-      case 2: noteColor = isDarkMode ? 0xFFEF5350 : 0xFFE53935;
+      case 2: 
+      noteLightColor = 0xFFE53935;
+      noteDarkColor = 0xFFEF5350;
         break;
-      case 3: noteColor = isDarkMode ? 0xFFFFCA28 : 0xFFF1C40F;
+      case 3: 
+      noteLightColor = 0xFFF1C40F;
+      noteDarkColor = 0xFFFFCA28;
         break;
-      case 4: noteColor = isDarkMode ? 0xFFFFA726 : 0xFFFF9800;
+      case 4: 
+      noteLightColor = 0xFFFF9800;
+      noteDarkColor = 0xFFFFA726;
         break;
-      case 5: noteColor = isDarkMode ? 0xFF66BB6A : 0xFF4CAF50;
+      case 5: 
+      noteLightColor = 0xFF4CAF50;
+      noteDarkColor = 0xFF66BB6A;
         break;
-      case 6: noteColor = isDarkMode ? 0xFF9CCC65 : 0xFF16A085;
+      case 6: 
+      noteLightColor = 0xFF16A085;
+      noteDarkColor = 0xFF9CCC65;
         break;
-      case 7: noteColor = isDarkMode ? 0xFFBA68C8 : 0xFF8E44AD;
+      case 7: 
+      noteLightColor = 0xFF8E44AD;
+      noteDarkColor = 0xFFBA68C8;
         break;
     }
     
@@ -51,7 +67,8 @@ class NoteProvider with ChangeNotifier {
       id: DateTime.now().toString(),
       title: noteTitle,
       desc: noteDesc,
-      color: noteColor,
+      lightColor: noteLightColor,
+      darkColor: noteDarkColor,
     );
 
     if(index != null) { // UNDO Operation
@@ -64,7 +81,11 @@ class NoteProvider with ChangeNotifier {
 
       Navigator.of(context).pushNamed(
         NoteScreen.routeName,
-        arguments: Args(lastNoteIndex, newNote.color),
+        arguments: Args(
+          lastNoteIndex, 
+          newNote.lightColor,
+          newNote.darkColor,
+        ),
       );
     }
 
@@ -77,17 +98,19 @@ class NoteProvider with ChangeNotifier {
           "id": deletedNote.id,
           "title": deletedNote.title,
           "desc": deletedNote.desc,
-          "color": deletedNote.color,
+          "lightColor": deletedNote.lightColor,
+          "darkColor": deletedNote.darkColor,
         },
       );
     } else {
-      DBHelper.insertToDb(
+      DBHelper.insertToDb( // INSERT Operation
         "user_notes", 
         {
           "id": newNote.id,
           "title": newNote.title,
           "desc": newNote.desc,
-          "color": noteColor,
+          "lightColor": noteLightColor,
+          "darkColor": noteDarkColor,
         },
       );
     }
@@ -102,7 +125,8 @@ class NoteProvider with ChangeNotifier {
         id: item["id"],
         title: item["title"],
         desc: item["desc"],
-        color: item["color"],
+        lightColor: item["lightColor"],
+        darkColor: item["darkColor"],
       );
     }).toList();
 
@@ -160,6 +184,18 @@ class NoteProvider with ChangeNotifier {
     await fetchOrSetNotes();
     // notifyListeners();
   }
+
+  // void switchNoteColor({String tableName}) async {
+
+  //   final database = await DBHelper.database(tableName);
+
+  //   await database.update(
+  //     tableName,
+  //     {
+
+  //     },
+  //   );
+  // }
 
   Note getNoteById(String id) {
     return _items.firstWhere((note) => note.id == id);

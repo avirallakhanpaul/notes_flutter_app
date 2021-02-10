@@ -1,6 +1,11 @@
 class Args {
   final int index;
-  final int color;
+  final int lightColor;
+  final int darkColor;
 
-  Args(this.index, this.color);
+  Args(
+    this.index, 
+    this.lightColor,
+    this.darkColor,
+  );
 }

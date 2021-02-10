@@ -113,7 +113,9 @@ class _NoteScreenState extends State<NoteScreen> {
         builder: (ctx, theme, child) {
           return Scaffold(
             appBar: AppBar(
-              backgroundColor: Color(noteArgs.color),
+              backgroundColor: theme.isDarkTheme
+              ?  Color(noteArgs.darkColor)
+              : Color(noteArgs.lightColor),
               leading: IconButton(
                 icon: Icon(
                   Icons.arrow_back_ios,
@@ -161,18 +163,28 @@ class _NoteScreenState extends State<NoteScreen> {
                     Icons.more_vert,
                     color: Colors.white,
                   ),
+                  color: theme.isDarkTheme 
+                  ? Color(0xFF424242)
+                  : Colors.white,
                   onSelected: popupMenuAction,
                   itemBuilder: (ctx) {
                     return <PopupMenuEntry<PopupOptions>>[
-                      const PopupMenuItem<PopupOptions>(
+                      PopupMenuItem<PopupOptions>(
                         value: PopupOptions.delete,
                         child: ListTile(
                           leading: Icon(
                             Icons.delete,
-                            color: Colors.red,
+                            color: theme.isDarkTheme
+                            ? Color(0xFFEF5350)
+                            : Colors.red,
                           ),
-                          title: const Text(
+                          title: Text(
                             "Delete",
+                            style: TextStyle(
+                              color: theme.isDarkTheme
+                              ? Colors.white
+                              : Colors.black,
+                            ),
                           ),
                         ),
                       ),

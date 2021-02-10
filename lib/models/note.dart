@@ -3,12 +3,14 @@ class Note {
   String id;
   String title;
   String desc;
-  int color;
+  int lightColor;
+  int darkColor;
 
   Note({
     this.id,
     this.title,
     this.desc,
-    this.color,
+    this.lightColor,
+    this.darkColor,
   });
 }

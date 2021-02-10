@@ -17,7 +17,8 @@ class DBHelper {
               id text primary key,
               title text,
               desc text,
-              color int(10)
+              lightColor int(10),
+              darkColor int(10)
             )
           '''
         );

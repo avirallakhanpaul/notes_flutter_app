@@ -1,6 +1,7 @@
 class Note {
 
   String id;
+  String userId;
   String title;
   String desc;
   int lightColor;
@@ -8,6 +9,7 @@ class Note {
 
   Note({
     this.id,
+    this.userId,
     this.title,
     this.desc,
     this.lightColor,

@@ -1,38 +1,39 @@
+import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_database/ui/firebase_animated_list.dart';
 import "package:flutter/material.dart";
-import 'package:notes_app/common_widgtes/delete_alert_dialog.dart';
+import 'package:notes_app/models/note.dart';
+import 'package:provider/provider.dart';
+
+import 'package:notes_app/providers/auth_provider.dart';
 import 'package:notes_app/providers/note_provider.dart';
 import 'package:notes_app/providers/theme_provider.dart';
-import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:notes_app/common_widgtes/delete_alert_dialog.dart';
 import "./widgets/note_card.dart";
-import "./widgets/add_note_card.dart";
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
 
   static const routeName = "/home";
 
   @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+
+  Query _dbRef;
+
+  @override
+  void initState() {
+    super.initState();
+    _dbRef = FirebaseDatabase.instance.reference().child("Notes").orderByChild("userId");
+  }
+
+  @override
   Widget build(BuildContext context) {
-
-    // final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
-
-    // await themeProvider.initTheme();
-    // final isDarkMode = themeProvider.isDarkThemeEnabled;
-
-    // void setHomeTheme() async {
-      
-    //   await themeProvider.toggleAndSetTheme();
-    //   setState(() {
-    //     isDarkMode = themeProvider.isDarkThemeEnabled;
-    //   });
-    // }
-
-    // isDarkMode = context.watch<ThemeProvider>().isDarkThemeEnabled;
-
-    // isDarkMode = Provider.of<ThemeProvider>(context).getTheme();
-
-    // print("Home Screen: $isDarkMode");
+    
+    final noteProvider = Provider.of<NoteProvider>(context, listen: false);
+    final authProvider = Provider.of<AuthProvider>(context);
+    // final dbRef = FirebaseDatabase.instance.reference();
     
     return Consumer<ThemeProvider>(
       builder: (ctx, theme, _) {
@@ -69,35 +70,50 @@ class HomeScreen extends StatelessWidget {
                 ),
               ],
             ),
-            leading: IconButton(
-              icon: Icon(
-                theme.isDarkTheme
-                ? Icons.lightbulb
-                : Icons.lightbulb_outline,
-                size: 30,
-                color: theme.isDarkTheme
-                ? Colors.white
-                : Color(0xFF121212),
+            leading: Transform.scale(
+              scale: 1.2,
+              child: Switch(
+                value: theme.isDarkTheme,
+                onChanged: ((_) => theme.toggleTheme()),
+                inactiveTrackColor: Color(0xFF4D4D4D),
+                inactiveThumbColor: Color(0xFF78909C),
+                inactiveThumbImage: AssetImage(
+                  "assets/icons/lightmode.png",
+                ),
+                activeTrackColor: Color(0xFF4D4D4D),
+                activeColor: Color(0xFF42A5F5),
+                activeThumbImage: AssetImage(
+                  "assets/icons/darkmode.png",
+                ),
               ),
-              onPressed: () => theme.toggleTheme(),
             ),
             actions: [
               IconButton(
                 icon: Icon(
-                  Icons.add,
-                  size: 30,
+                  Icons.exit_to_app_outlined,
                   color: theme.isDarkTheme
                   ? Colors.white
                   : Colors.black,
+                  size: 30,
                 ),
-                onPressed: () {
-                  Provider.of<NoteProvider>(context, listen: false).addNote(context: context);
-                },
+                onPressed: () => authProvider.signOut(),
               ),
             ],
             centerTitle: true,
             elevation: 0,
           ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () => noteProvider.addNote(context: context),
+            backgroundColor: theme.isDarkTheme
+            ? Color(0xFF64B5F6)
+            : Color(0xFF2196F3),
+            child: Icon(
+              Icons.add,
+              color: Colors.white,
+              size: 30,
+            ),
+          ),
+          floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
           backgroundColor: theme.isDarkTheme == true
             ? Color(0xFF121212) 
             : Colors.white,
@@ -113,18 +129,24 @@ class HomeScreen extends StatelessWidget {
                       SizedBox(
                         height: 40,
                       ),
-                      FutureBuilder(
-                        future: Provider.of<NoteProvider>(context, listen: false).fetchOrSetNotes(),
-                        builder: (ctx, snapshot) {
-                          return snapshot.connectionState == ConnectionState.waiting
-                          ? Center(
-                            child: CircularProgressIndicator(),
-                          )
-                          : Consumer<NoteProvider>(
-                            builder: (ctx, note, child) => note.items.length <= 0
+                      FirebaseAnimatedList(
+                        query: _dbRef.equalTo(authProvider.userId),
+                        defaultChild: Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                        physics: NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemBuilder: (ctx, snapshot, animation, i) {
+                          Map<String, dynamic> noteData = snapshot.value;
+                          final key = snapshot.key;
+                          print("User ID: ${authProvider.userId}");
+                          print("Key: $key");
+                          print(noteData);
+                          return Consumer<NoteProvider>(
+                            builder: (ctx, note, child) => noteData.keys.length <= 0
                               ? Container()
                               : ListView.builder(
-                                itemCount: note.items.length,
+                                itemCount: 1,
                                 shrinkWrap: true,
                                 physics: NeverScrollableScrollPhysics(),
                                 itemBuilder: (ctx, index) {
@@ -154,7 +176,7 @@ class HomeScreen extends StatelessWidget {
                                         confirmDismiss: (direction) async {
 
                                           final delAlertDialog = DeleteAlertDialog(
-                                            noteIndex: index,
+                                            noteIndex: index.toString(),
                                             fromNoteScreen: false,
                                           );
 
@@ -197,7 +219,17 @@ class HomeScreen extends StatelessWidget {
                                             ),
                                           );
                                         },
-                                        child: NoteCard(index),
+                                        child: NoteCard(
+                                          // noteData["id"],
+                                          Note(
+                                            id: noteData["id"],
+                                            userId: noteData["userId"],
+                                            title: noteData["title"],
+                                            desc: noteData["desc"],
+                                            lightColor: noteData["lightColor"],
+                                            darkColor: noteData["darkColor"],
+                                          ),
+                                        ),
                                       ),
                                       SizedBox(
                                         height: 15,
@@ -207,9 +239,8 @@ class HomeScreen extends StatelessWidget {
                                 }
                               ),
                           );
-                        }
+                        },
                       ),
-                      AddNoteCard(),
                       SizedBox(
                         height: 30,
                       ),

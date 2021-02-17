@@ -1,10 +1,10 @@
 import "package:flutter/material.dart";
+import 'package:notes_app/models/note.dart';
 import 'package:notes_app/providers/theme_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import "../../providers/note_provider.dart";
-import "../../helpers/arguments.dart";
 import "../../common_widgtes/delete_alert_dialog.dart";
 
 enum PopupOptions { delete }
@@ -21,6 +21,7 @@ class _NoteScreenState extends State<NoteScreen> {
 
   final titleController = TextEditingController();
   final descController = TextEditingController();
+  bool isSaving = false;
 
   @override
   void dispose() {
@@ -33,10 +34,11 @@ class _NoteScreenState extends State<NoteScreen> {
   Widget build(BuildContext context) {
 
     final noteProvider = Provider.of<NoteProvider>(context);
-    final Args noteArgs = ModalRoute.of(context).settings.arguments;
+    // final Args note = ModalRoute.of(context).settings.arguments;
+    final Note note = ModalRoute.of(context).settings.arguments;
 
-    titleController.text = noteProvider.items[noteArgs.index].title;
-    descController.text = noteProvider.items[noteArgs.index].desc;
+    titleController.text = note.title;
+    descController.text = note.desc;
 
     final initialTitleValue = titleController.text;
     final initialDescValue = descController.text;
@@ -46,7 +48,7 @@ class _NoteScreenState extends State<NoteScreen> {
       if(optSelected == PopupOptions.delete) {
         
         final DeleteAlertDialog delAlertDialog = DeleteAlertDialog(
-          noteIndex: noteArgs.index,
+          noteIndex: note.id,
           fromNoteScreen: true,
         );
 
@@ -63,50 +65,43 @@ class _NoteScreenState extends State<NoteScreen> {
       }
     }
 
-    void saveNote() {
+    void saveNote({bool isPopScope}) async {
 
-      if((titleController.text == initialTitleValue) && (descController.text != initialDescValue)) {
-        
-        noteProvider.updateNoteDesc(
-          tableName: "user_notes",
-          id: noteProvider.items[noteArgs.index].id,
-          newDesc: descController.text,
-        );
-      } else if((titleController.text != initialTitleValue) && (descController.text == initialDescValue)) {
-
-        noteProvider.updateNoteTitle(
-          tableName: "user_notes",
-          id: noteProvider.items[noteArgs.index].id,
-          newTitle: titleController.text,
-        );
-      } else if((titleController.text != initialTitleValue) && (descController.text != initialDescValue)) {
-
-        noteProvider.updateNoteTitle(
-          tableName: "user_notes",
-          id: noteProvider.items[noteArgs.index].id,
-          newTitle: titleController.text,
-        );
-
-        noteProvider.updateNoteDesc(
-          tableName: "user_notes",
-          id: noteProvider.items[noteArgs.index].id,
-          newDesc: descController.text,
-        );
+      if(titleController.text == initialTitleValue && descController.text == initialDescValue) {
+        Navigator.pop(context);
       } else {
-        return;
-      }
+        await noteProvider.updateNote(
+          idKey: note.id,
+          note: {
+            "title": titleController.text,
+            "desc": descController.text,
+            "lightColor": note.lightColor,
+            "darkColor": note.darkColor,
+          },
+        );
 
-      Fluttertoast.showToast(
-        msg: "Note Saved",
-        fontSize: 16,
-        gravity: ToastGravity.SNACKBAR,
-        toastLength: Toast.LENGTH_SHORT,
-      );
+        // setState(() {
+        //   isSaving = false;
+        // });
+
+        Fluttertoast.showToast(
+          msg: "Note Saved",
+          fontSize: 16,
+          gravity: ToastGravity.SNACKBAR,
+          toastLength: Toast.LENGTH_SHORT,
+        );
+
+        if(!isPopScope || isPopScope == null) {
+          Navigator.pop(context);
+        } else {
+          return;
+        }
+      }
     }
 
     return WillPopScope(
       onWillPop: () async {
-        saveNote();
+        saveNote(isPopScope: true);
         return true;
       },
       child: Consumer<ThemeProvider>(
@@ -114,18 +109,15 @@ class _NoteScreenState extends State<NoteScreen> {
           return Scaffold(
             appBar: AppBar(
               backgroundColor: theme.isDarkTheme
-              ?  Color(noteArgs.darkColor)
-              : Color(noteArgs.lightColor),
+              ? Color(note.darkColor)
+              : Color(note.lightColor),
               leading: IconButton(
                 icon: Icon(
                   Icons.arrow_back_ios,
                   size: 20,
                   color: Colors.white
                 ),
-                onPressed: () => {
-                  saveNote(),
-                  Navigator.of(context).pop(),
-                }
+                onPressed: () => saveNote(),
               ),
               title: Consumer<NoteProvider>(
                 builder: (ctx, note, child) {
@@ -148,15 +140,14 @@ class _NoteScreenState extends State<NoteScreen> {
               ),
               elevation: 0,
               actions: [
+                // isSaving 
+                // ? CircularProgressIndicator()
                 IconButton(
                   icon: Icon(
                     Icons.done,
                     color: Colors.white,
                   ),
-                  onPressed: () {
-                    saveNote();
-                    Navigator.of(context).pop();
-                  }
+                  onPressed: () => saveNote(),
                 ),
                 PopupMenuButton<PopupOptions>(
                   icon: Icon(

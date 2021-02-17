@@ -1,12 +1,10 @@
 import 'dart:math';
 
 import "package:flutter/material.dart";
-import 'package:notes_app/providers/theme_provider.dart';
-import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import "package:firebase_database/firebase_database.dart";
+import 'package:notes_app/providers/auth_provider.dart';
 
 import '../helpers/db_helper.dart';
-import '../helpers/arguments.dart';
 import '../models/note.dart';
 import '../screens/note_screen/note_screen.dart';
 
@@ -15,17 +13,21 @@ class NoteProvider with ChangeNotifier {
   int noteLightColor, noteDarkColor;
   var random = Random();
 
+  final dbRef = FirebaseDatabase.instance.reference();
+  String userId;
+
   List<Note> _items = [];
-  
-  List<Note> get items {
-    return [..._items];
-  }
+  List<Note> items = [];
 
   bool isDarkMode;
 
-  void addNote({BuildContext context, int index, Note deletedNote, String noteTitle = "Title", String noteDesc = ""}) {
+  void setUserId(AuthProvider auth) {
+    userId = auth.userId;
+  }
 
-    print("isDarkMode(NoteProv): $isDarkMode");
+  void addNote({BuildContext context, int index, Note deletedNote, String noteTitle = "Title", String noteDesc = ""}) async {
+
+    print(userId);
 
     switch(random.nextInt(8)) {
 
@@ -64,7 +66,8 @@ class NoteProvider with ChangeNotifier {
     }
     
     final newNote = Note(
-      id: DateTime.now().toString(),
+      id: "",
+      userId: userId,
       title: noteTitle,
       desc: noteDesc,
       lightColor: noteLightColor,
@@ -75,18 +78,14 @@ class NoteProvider with ChangeNotifier {
       _items.insert(index, deletedNote);
     } else {
 
-      _items.add(newNote);
-
-      final lastNoteIndex = _items.length - 1;
-
+      // final lastNoteIndex = _items.length;
+      
       Navigator.of(context).pushNamed(
         NoteScreen.routeName,
-        arguments: Args(
-          lastNoteIndex, 
-          newNote.lightColor,
-          newNote.darkColor,
-        ),
+        arguments: newNote,
       );
+
+      _items.add(newNote);
     }
 
     notifyListeners();
@@ -103,72 +102,104 @@ class NoteProvider with ChangeNotifier {
         },
       );
     } else {
-      DBHelper.insertToDb( // INSERT Operation
-        "user_notes", 
-        {
-          "id": newNote.id,
-          "title": newNote.title,
-          "desc": newNote.desc,
-          "lightColor": noteLightColor,
-          "darkColor": noteDarkColor,
-        },
-      );
+
+      // .equalTo(userId).reference()
+
+      // dbRef.child("Notes").push().set({ // INSERT Operation
+      //   "id": newNote.id,
+      //   "title": newNote.title,
+      //   "desc": newNote.desc,
+      //   "lightColor": newNote.lightColor,
+      //   "darkColor": newNote.darkColor,
+      // });
+
+      final key = dbRef.child("Notes").push().key;
+
+      dbRef.child(key).set({ // INSERT Operation
+        "id": key,
+        "userId": newNote.userId,
+        "title": newNote.title,
+        "desc": newNote.desc,
+        "lightColor": newNote.lightColor,
+        "darkColor": newNote.darkColor,
+      });
     }
   }
 
   Future<void> fetchOrSetNotes() async {
 
-    final dataList = await DBHelper.getData("user_notes");
+  //   final dataList = await DBHelper.getData("user_notes");
 
-    _items = dataList.map((item) {
-      return Note(
-        id: item["id"],
-        title: item["title"],
-        desc: item["desc"],
-        lightColor: item["lightColor"],
-        darkColor: item["darkColor"],
-      );
-    }).toList();
+  //   _items = dataList.map((item) {
+  //     return Note(
+  //       id: item["id"],
+  //       title: item["title"],
+  //       desc: item["desc"],
+  //       lightColor: item["lightColor"],
+  //       darkColor: item["darkColor"],
+  //     );
+  //   }).toList();
 
-    notifyListeners();
+  //   await dbRef.once().then((DataSnapshot dataSnapshot) {
+
+  //     print(dataSnapshot.value["Notes"]["id"]);
+
+  //     var values = dataSnapshot.data.value;
+
+  //     values.forEach((val) {
+  //       print(val);
+  //     });
+
+  //     for(var value in values) {
+  //       print(value);
+
+  //       _items.add(
+  //         Note(
+  //           id: value["id"],
+  //           title: value["title"],
+  //           desc: value["desc"],
+  //           lightColor: value["lightColor"],
+  //           darkColor: value["darkColor"],
+  //         ),
+  //       );
+
+  //     _items = values.map((value) {
+  //       print(value["id"]);
+  //       return Note(
+  //         id: value["id"],
+  //         title: value["title"],
+  //         desc: value["desc"],
+  //         lightColor: value["lightColor"],
+  //         darkColor: value["darkColor"],
+  //       );
+  //     });
+  //   });
+
+  //   await dbRef.once().then((DataSnapshot dataSnapshot) {
+  //     var keys = dataSnapshot.value.keys;
+  //     var values = dataSnapshot.value;
+
+  //     List list = [];
+
+  //     list = keys;
+
+  //     list.forEach((value) {
+  //       print(value);
+  //     });
+
+  //     for(var key in keys) {
+
+  //       print("$key(key): ${values[key]}");
+  //     }
+  //   });
+  //   notifyListeners();
   }
 
-  Future<void> updateNoteTitle({String tableName, String id, String newTitle}) async {
-
-    final database = await DBHelper.database(tableName);
-
-    if(newTitle == "" || newTitle.isEmpty) {
-      newTitle = "Title";
-    }
-
-    database.update(
-      tableName,
-      {
-        "title": newTitle,
-      },
-      where: "id = ?",
-      whereArgs: [id],
-    );
-
-    await fetchOrSetNotes();
-    notifyListeners();
-  }
-
-  Future<void> updateNoteDesc({String tableName, String id, String newDesc}) async {
-
-    final database = await DBHelper.database(tableName);
-
-    database.update(
-      tableName,
-      {
-        "desc": newDesc,
-      },
-      where: "id = ?",
-      whereArgs: [id],
-    );
-
-    await fetchOrSetNotes();
-    notifyListeners();
+  Future<void> updateNote({String idKey, Map<String, dynamic> note}) async {
+    print("idKey: $idKey");
+    print("User ID(NoteProvider): $userId");
+    await dbRef.equalTo(userId).reference().child(idKey).update(note);
+    // dbRef.child("Notes").reference().push()
   }
 
   Future<void> deleteNote({String tableName, String id}) async {
@@ -197,7 +228,7 @@ class NoteProvider with ChangeNotifier {
   //   );
   // }
 
-  Note getNoteById(String id) {
-    return _items.firstWhere((note) => note.id == id);
-  }
+  // Future<DataSnapshot> getNoteById(String id) async {
+  //   return await dbRef.child("Notes").equalTo(userId).reference().child(id).once().then((val) => val);
+  // }
 }

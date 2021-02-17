@@ -3,9 +3,8 @@ import 'package:notes_app/providers/theme_provider.dart';
 import "package:provider/provider.dart";
 
 import "../../../providers/note_provider.dart";
-// import "../../../providers/theme_provider.dart";
 
-class AddNoteCard extends StatelessWidget {
+class AddNoteFloatingActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
@@ -48,9 +47,7 @@ class AddNoteCard extends StatelessWidget {
                     : Colors.black,
                   ),
                 ),
-                onTap: () {
-                  noteProvider.addNote(context: context);
-                },
+                onTap: () => noteProvider.addNote(context: context),
               ),
             );
           }

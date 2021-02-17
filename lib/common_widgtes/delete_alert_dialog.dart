@@ -6,7 +6,7 @@ import "../providers/note_provider.dart";
 
 class DeleteAlertDialog extends StatelessWidget {
 
-  final int noteIndex;
+  final String noteIndex;
   final bool fromNoteScreen;
 
   DeleteAlertDialog({this.noteIndex, this.fromNoteScreen});
@@ -33,7 +33,7 @@ class DeleteAlertDialog extends StatelessWidget {
             ),
           ),
           content: Text(
-            "Remove ${noteProvider.items[noteIndex].title} permanently?",
+            "Remove ${noteProvider.items[int.parse(noteIndex)].title} permanently?",
             style: TextStyle(
               fontFamily: "Poppins",
               fontSize: 16,
@@ -50,7 +50,7 @@ class DeleteAlertDialog extends StatelessWidget {
 
                   await noteProvider.deleteNote(
                     tableName: "user_notes",
-                    id: noteProvider.items[noteIndex].id,
+                    id: noteProvider.items[int.parse(noteIndex)].id,
                   ),
 
                   Navigator.of(context).pop(),

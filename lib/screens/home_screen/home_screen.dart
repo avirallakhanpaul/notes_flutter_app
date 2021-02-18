@@ -22,18 +22,19 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Query _dbRef;
 
-  @override
-  void initState() {
-    super.initState();
-    _dbRef = FirebaseDatabase.instance.reference().child("Notes").orderByChild("userId");
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+    
+  // }
 
   @override
   Widget build(BuildContext context) {
     
     final noteProvider = Provider.of<NoteProvider>(context, listen: false);
     final authProvider = Provider.of<AuthProvider>(context);
-    // final dbRef = FirebaseDatabase.instance.reference();
+    _dbRef = FirebaseDatabase.instance.reference().child("notes")
+    .orderByChild("userId");
     
     return Consumer<ThemeProvider>(
       builder: (ctx, theme, _) {
@@ -129,117 +130,121 @@ class _HomeScreenState extends State<HomeScreen> {
                       SizedBox(
                         height: 40,
                       ),
-                      FirebaseAnimatedList(
-                        query: _dbRef.equalTo(authProvider.userId),
-                        defaultChild: Center(
-                          child: CircularProgressIndicator(),
-                        ),
-                        physics: NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemBuilder: (ctx, snapshot, animation, i) {
-                          Map<String, dynamic> noteData = snapshot.value;
-                          final key = snapshot.key;
-                          print("User ID: ${authProvider.userId}");
-                          print("Key: $key");
-                          print(noteData);
-                          return Consumer<NoteProvider>(
-                            builder: (ctx, note, child) => noteData.keys.length <= 0
-                              ? Container()
-                              : ListView.builder(
-                                itemCount: 1,
-                                shrinkWrap: true,
-                                physics: NeverScrollableScrollPhysics(),
-                                itemBuilder: (ctx, index) {
-                                  return Column(
-                                    children: <Widget>[
-                                      Dismissible(
-                                        key: UniqueKey(),
-                                        background: Card(
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(10),
-                                          ),
-                                          color: Colors.red.shade700,
-                                          child: Padding(
-                                            padding: const EdgeInsets.only(
-                                              right: 15,
-                                            ),
-                                            child: Align(
-                                              alignment: Alignment.centerRight,
-                                              child: Icon(
-                                                Icons.delete,
-                                                color: Colors.white,
+                      Consumer<AuthProvider>(
+                        builder: (ctx, auth, index) {
+                          print("HmScrn Id: ${auth.userId}");
+                          return FirebaseAnimatedList(
+                            query: _dbRef.equalTo(auth.userId),
+                            defaultChild: Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                            physics: NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemBuilder: (ctx, snapshot, animation, i) {
+                              snapshot.value == null ? print("Snapshot is null") :
+                              print("HmScreen ID: ${auth.userId}");
+                              Map<dynamic, dynamic> noteData = snapshot.value;
+                              print(noteData);
+                              return Consumer<NoteProvider>(
+                                builder: (ctx, note, child) => noteData.keys.length <= 0
+                                  ? Container()
+                                  : ListView.builder(
+                                    itemCount: 1,
+                                    shrinkWrap: true,
+                                    physics: NeverScrollableScrollPhysics(),
+                                    itemBuilder: (ctx, index) {
+                                      return Column(
+                                        children: <Widget>[
+                                          Dismissible(
+                                            key: UniqueKey(),
+                                            background: Card(
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(10),
                                               ),
-                                            ),
-                                          ),
-                                        ),
-                                        direction: DismissDirection.endToStart,
-                                        confirmDismiss: (direction) async {
-
-                                          final delAlertDialog = DeleteAlertDialog(
-                                            noteIndex: index.toString(),
-                                            fromNoteScreen: false,
-                                          );
-
-                                          return await showDialog(
-                                            context: context,
-                                            builder: (context) => delAlertDialog,
-                                          );
-                                        },
-                                        onDismissed: (direction) {
-
-                                          Scaffold.of(ctx).removeCurrentSnackBar();
-
-                                          final deletedNote = note.items[index];
-
-                                          note.deleteNote(
-                                            tableName: "user_notes",
-                                            id: note.items[index].id,
-                                          );
-
-                                          return Scaffold.of(ctx).showSnackBar(
-                                            SnackBar(
-                                              content: Text(
-                                                "Note Deleted",
-                                                style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontFamily: "Poppins",
+                                              color: Colors.red.shade700,
+                                              child: Padding(
+                                                padding: const EdgeInsets.only(
+                                                  right: 15,
+                                                ),
+                                                child: Align(
+                                                  alignment: Alignment.centerRight,
+                                                  child: Icon(
+                                                    Icons.delete,
+                                                    color: Colors.white,
+                                                  ),
                                                 ),
                                               ),
-                                              duration: Duration(seconds: 3),
-                                              backgroundColor: Colors.red.shade900,
-                                              action: SnackBarAction(
-                                                label: "Undo",
-                                                onPressed: () {
-                                                  note.addNote(
-                                                    index: index,
-                                                    deletedNote: deletedNote,
-                                                  );
-                                                },
+                                            ),
+                                            direction: DismissDirection.endToStart,
+                                            confirmDismiss: (direction) async {
+
+                                              final delAlertDialog = DeleteAlertDialog(
+                                                noteIndex: index.toString(),
+                                                fromNoteScreen: false,
+                                              );
+
+                                              return await showDialog(
+                                                context: context,
+                                                builder: (context) => delAlertDialog,
+                                              );
+                                            },
+                                            onDismissed: (direction) {
+
+                                              Scaffold.of(ctx).removeCurrentSnackBar();
+
+                                              final deletedNote = note.items[index];
+
+                                              note.deleteNote(
+                                                tableName: "user_notes",
+                                                id: note.items[index].id,
+                                              );
+
+                                              return Scaffold.of(ctx).showSnackBar(
+                                                SnackBar(
+                                                  content: Text(
+                                                    "Note Deleted",
+                                                    style: TextStyle(
+                                                      fontSize: 16,
+                                                      fontFamily: "Poppins",
+                                                    ),
+                                                  ),
+                                                  duration: Duration(seconds: 3),
+                                                  backgroundColor: Colors.red.shade900,
+                                                  action: SnackBarAction(
+                                                    label: "Undo",
+                                                    onPressed: () {
+                                                      note.addNote(
+                                                        index: index,
+                                                        deletedNote: deletedNote,
+                                                      );
+                                                    },
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                            child: NoteCard(
+                                              // noteData["id"],
+                                              Note(
+                                                id: noteData["id"].toString(),
+                                                userId: noteData["userId"],
+                                                title: noteData["title"],
+                                                desc: noteData["desc"],
+                                                lightColor: noteData["lightColor"],
+                                                darkColor: noteData["darkColor"],
                                               ),
                                             ),
-                                          );
-                                        },
-                                        child: NoteCard(
-                                          // noteData["id"],
-                                          Note(
-                                            id: noteData["id"],
-                                            userId: noteData["userId"],
-                                            title: noteData["title"],
-                                            desc: noteData["desc"],
-                                            lightColor: noteData["lightColor"],
-                                            darkColor: noteData["darkColor"],
                                           ),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: 15,
-                                      ),
-                                    ],
-                                  );
-                                }
-                              ),
+                                          SizedBox(
+                                            height: 15,
+                                          ),
+                                        ],
+                                      );
+                                    }
+                                  ),
+                              );
+                            },
                           );
-                        },
+                        }
                       ),
                       SizedBox(
                         height: 30,

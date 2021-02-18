@@ -17,14 +17,7 @@ class AuthProvider with ChangeNotifier {
   String key = "uId";
 
   String _userId;
-  String get userId {
-    if(_userId == null) {
-      print("User id is NULL");
-      return null;
-    } else {
-      return _userId;
-    }
-  }
+  String get userId => _userId;
 
   Future<void> _initPrefs() async {
     if(_prefs == null) {
@@ -37,6 +30,8 @@ class AuthProvider with ChangeNotifier {
   void _loadFromPrefs() async {
     await _initPrefs();
     _userId = _prefs.getString(key) ?? null;
+    print("Stored user info: $_userId");
+    print(userId);
     notifyListeners();
   }
 
@@ -58,9 +53,6 @@ class AuthProvider with ChangeNotifier {
         notifyListeners();
         print("User: $_userId");
       });
-
-      notifyListeners();
-      return true;
     } on FirebaseAuthException catch(error) {
       return error.message;
     }
@@ -73,7 +65,6 @@ class AuthProvider with ChangeNotifier {
         email: email,
         password: password,
       );
-      return true;
     } on FirebaseAuthException catch(error) {
       return error.message;
     }

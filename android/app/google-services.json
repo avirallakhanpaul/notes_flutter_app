@@ -1,34 +1,34 @@
 {
   "project_info": {
-    "project_number": "444929847908",
-    "project_id": "justnotes-3a2b2",
-    "firebase_url": "https://justnotes-3a2b2-default-rtdb.firebaseio.com/",
-    "storage_bucket": "justnotes-3a2b2.appspot.com"
+    "project_number": "58413811910",
+    "firebase_url": "https://justnotes-database-default-rtdb.firebaseio.com/",
+    "project_id": "justnotes-database",
+    "storage_bucket": "justnotes-database.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:444929847908:android:4c779c859f2b89875b6571",
+        "mobilesdk_app_id": "1:58413811910:android:7461d3b0e3d869f6d96fc7",
         "android_client_info": {
           "package_name": "com.avirallakhanpaul.justnotes"
         }
       },
       "oauth_client": [
         {
-          "client_id": "444929847908-ulscnhj1epq1cnergrq7icdht91qmka4.apps.googleusercontent.com",
+          "client_id": "58413811910-0425p58gjmeeneojqhq3360cq1lo1rdq.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAPTYHsvW9QO_ZlJq1p4HcmpEKZd7MOD3I"
+          "current_key": "AIzaSyB0vJQ4wpdm0RXlu2DLrLE7T7d-7tN2Jn4"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "444929847908-ulscnhj1epq1cnergrq7icdht91qmka4.apps.googleusercontent.com",
+              "client_id": "58413811910-0425p58gjmeeneojqhq3360cq1lo1rdq.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

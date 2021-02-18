@@ -113,10 +113,11 @@ class NoteProvider with ChangeNotifier {
       //   "darkColor": newNote.darkColor,
       // });
 
-      final key = dbRef.child("Notes").push().key;
+      final key = dbRef.child("notes").push().path;
+      final id = key.substring(6, key.length).trim();
 
       dbRef.child(key).set({ // INSERT Operation
-        "id": key,
+        "id": id,
         "userId": newNote.userId,
         "title": newNote.title,
         "desc": newNote.desc,
@@ -196,9 +197,9 @@ class NoteProvider with ChangeNotifier {
   }
 
   Future<void> updateNote({String idKey, Map<String, dynamic> note}) async {
-    print("idKey: $idKey");
-    print("User ID(NoteProvider): $userId");
-    await dbRef.equalTo(userId).reference().child(idKey).update(note);
+    // print("idKey: $idKey");
+    // print("User ID(NoteProvider): $userId");
+    await dbRef.child("notes").equalTo(userId).reference().child(idKey).update(note);
     // dbRef.child("Notes").reference().push()
   }
 

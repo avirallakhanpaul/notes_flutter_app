@@ -27,7 +27,7 @@ class NoteProvider with ChangeNotifier {
 
   void addNote({BuildContext context, int index, Note deletedNote, String noteTitle = "Title", String noteDesc = ""}) async {
 
-    print(userId);
+    print("NoteProvider id: $userId");
 
     switch(random.nextInt(8)) {
 
@@ -103,16 +103,6 @@ class NoteProvider with ChangeNotifier {
       );
     } else {
 
-      // .equalTo(userId).reference()
-
-      // dbRef.child("Notes").push().set({ // INSERT Operation
-      //   "id": newNote.id,
-      //   "title": newNote.title,
-      //   "desc": newNote.desc,
-      //   "lightColor": newNote.lightColor,
-      //   "darkColor": newNote.darkColor,
-      // });
-
       final key = dbRef.child("notes").push().path;
       final id = key.substring(6, key.length).trim();
 
@@ -127,73 +117,8 @@ class NoteProvider with ChangeNotifier {
     }
   }
 
-  Future<void> fetchOrSetNotes() async {
-
-  //   final dataList = await DBHelper.getData("user_notes");
-
-  //   _items = dataList.map((item) {
-  //     return Note(
-  //       id: item["id"],
-  //       title: item["title"],
-  //       desc: item["desc"],
-  //       lightColor: item["lightColor"],
-  //       darkColor: item["darkColor"],
-  //     );
-  //   }).toList();
-
-  //   await dbRef.once().then((DataSnapshot dataSnapshot) {
-
-  //     print(dataSnapshot.value["Notes"]["id"]);
-
-  //     var values = dataSnapshot.data.value;
-
-  //     values.forEach((val) {
-  //       print(val);
-  //     });
-
-  //     for(var value in values) {
-  //       print(value);
-
-  //       _items.add(
-  //         Note(
-  //           id: value["id"],
-  //           title: value["title"],
-  //           desc: value["desc"],
-  //           lightColor: value["lightColor"],
-  //           darkColor: value["darkColor"],
-  //         ),
-  //       );
-
-  //     _items = values.map((value) {
-  //       print(value["id"]);
-  //       return Note(
-  //         id: value["id"],
-  //         title: value["title"],
-  //         desc: value["desc"],
-  //         lightColor: value["lightColor"],
-  //         darkColor: value["darkColor"],
-  //       );
-  //     });
-  //   });
-
-  //   await dbRef.once().then((DataSnapshot dataSnapshot) {
-  //     var keys = dataSnapshot.value.keys;
-  //     var values = dataSnapshot.value;
-
-  //     List list = [];
-
-  //     list = keys;
-
-  //     list.forEach((value) {
-  //       print(value);
-  //     });
-
-  //     for(var key in keys) {
-
-  //       print("$key(key): ${values[key]}");
-  //     }
-  //   });
-  //   notifyListeners();
+  Query fetchNotes() {
+    return dbRef.child("notes").orderByChild("userId").equalTo(userId);
   }
 
   Future<void> updateNote({String idKey, Map<String, dynamic> note}) async {
@@ -213,7 +138,7 @@ class NoteProvider with ChangeNotifier {
       whereArgs: [id],
     );
 
-    await fetchOrSetNotes();
+    // await fetchOrSetNotes();
     // notifyListeners();
   }
 

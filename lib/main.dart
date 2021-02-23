@@ -45,7 +45,7 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
-        home: Home(),
+        home: Authentication(),
         theme: ThemeData(
           fontFamily: "Poppins",
         ),
@@ -61,7 +61,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class Home extends StatelessWidget {
+class Authentication extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
@@ -69,8 +69,10 @@ class Home extends StatelessWidget {
     final _firebaseUser = context.watch<User>();
 
     if(_firebaseUser != null) {
+      print("Home Screen");
       return HomeScreen();
     } else {
+      print("Login Screen");
       return LoginScreen();
     }
   }

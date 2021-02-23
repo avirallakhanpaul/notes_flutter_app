@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import 'package:notes_app/providers/theme_provider.dart';
 import 'package:notes_app/screens/authentication/login_screen.dart';
 
 import '../../providers/auth_provider.dart';
@@ -28,6 +29,7 @@ class _SignupScreenState extends State<SignupScreen> {
   Widget build(BuildContext context) {
 
     final authProvider = Provider.of<AuthProvider>(context);
+    final themeProvider = Provider.of<ThemeProvider>(context);
 
     String currentPass;
 
@@ -56,7 +58,9 @@ class _SignupScreenState extends State<SignupScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: themeProvider.isDarkTheme
+        ? Color(0xFF121212)
+        : Colors.white,
         elevation: 0,
         title: Row(
           children: <Widget>[
@@ -64,7 +68,9 @@ class _SignupScreenState extends State<SignupScreen> {
               "Just",
               style: TextStyle(
                 fontSize: 26,
-                color: Colors.black,
+                color: themeProvider.isDarkTheme
+                ? Colors.white
+                : Colors.black,
               ),
             ),
             Text(
@@ -72,14 +78,18 @@ class _SignupScreenState extends State<SignupScreen> {
               style: TextStyle(
                 fontSize: 26,
                 fontWeight: FontWeight.w700,
-                color: Color(0xFF2196F3),
+                color: themeProvider.isDarkTheme
+                ? Color(0xFF64B5F6)
+                : Color(0xFF2196F3),
               ),
             ),
           ],
         ),
         actions: [],
       ),
-      backgroundColor: Colors.white,
+      backgroundColor: themeProvider.isDarkTheme
+      ? Color(0xFF121212)
+      : Colors.white,
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.only(
@@ -93,7 +103,7 @@ class _SignupScreenState extends State<SignupScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               SizedBox(
-                height: 50,
+                height: 40,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -120,8 +130,10 @@ class _SignupScreenState extends State<SignupScreen> {
                               fontFamily: "Poppins",
                               fontSize: 24,
                               fontWeight: FontWeight.w700,
-                              color: Colors.black,
-                              letterSpacing: 0.7,
+                              letterSpacing: 0.1,
+                              color: themeProvider.isDarkTheme
+                              ? Colors.white
+                              : Colors.black,
                             ),
                           ),
                           TextSpan(
@@ -129,9 +141,10 @@ class _SignupScreenState extends State<SignupScreen> {
                             style: TextStyle(
                               fontFamily: "Poppins",
                               fontSize: 24,
-                              fontWeight: FontWeight.w700,
-                              color: Colors.grey.shade400,
-                              letterSpacing: 0.7,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.grey.shade500,
+                              height: 1.2,
+                              letterSpacing: 0.1,
                             ),
                           ),
                         ],
@@ -152,6 +165,12 @@ class _SignupScreenState extends State<SignupScreen> {
                         TextFormField(
                           keyboardType: TextInputType.emailAddress,
                           controller: emailController,
+                          style: TextStyle(
+                            fontFamily: "Poppins",
+                            color: themeProvider.isDarkTheme
+                            ? Colors.grey.shade300
+                            : Colors.grey.shade800,
+                          ),
                           onChanged: (_) {
                             checkValidation();
                           },
@@ -169,21 +188,30 @@ class _SignupScreenState extends State<SignupScreen> {
                           },
                           decoration: InputDecoration(
                             hintText: "Email",
+                            hintStyle: TextStyle(
+                              color: Color(0xFF969696)
+                            ),
                             enabledBorder: UnderlineInputBorder(
                               borderSide: BorderSide(
                                 width: 1,
-                                color: Colors.black,
+                                color: themeProvider.isDarkTheme
+                                ? Color(0xFF404040)
+                                : Colors.black,
                               ),
                             ),
                             focusedBorder: UnderlineInputBorder(
                               borderSide: BorderSide(
                                 width: 1.5,
-                                color: Color(0xFF2196F3),
+                                color: themeProvider.isDarkTheme
+                                ? Color(0xFF64B5F6)
+                                : Color(0xFF2196F3),
                               ),
                             ),
                             prefixIcon: Icon(
                               Icons.mail_outline,
-                              color: Colors.black,
+                              color: themeProvider.isDarkTheme
+                              ? Colors.white
+                              : Colors.black,
                             ),
                           ),
                         ),
@@ -194,6 +222,12 @@ class _SignupScreenState extends State<SignupScreen> {
                           keyboardType: TextInputType.text,
                           obscureText: true,
                           controller: passwordController,
+                          style: TextStyle(
+                            fontFamily: "Poppins",
+                            color: themeProvider.isDarkTheme
+                            ? Colors.grey.shade300
+                            : Colors.grey.shade800,
+                          ),
                           onChanged: (value) {
                             currentPass = value;
                             checkValidation();
@@ -212,21 +246,30 @@ class _SignupScreenState extends State<SignupScreen> {
                           },
                           decoration: InputDecoration(
                             hintText: "Password",
+                            hintStyle: TextStyle(
+                              color: Color(0xFF969696)
+                            ),
                             enabledBorder: UnderlineInputBorder(
                               borderSide: BorderSide(
                                 width: 1,
-                                color: Colors.black,
+                                color: themeProvider.isDarkTheme
+                                ? Color(0xFF404040)
+                                : Colors.black,
                               ),
                             ),
                             focusedBorder: UnderlineInputBorder(
                               borderSide: BorderSide(
                                 width: 1.5,
-                                color: Color(0xFF2196F3),
+                                color: themeProvider.isDarkTheme
+                                ? Color(0xFF64B5F6)
+                                : Color(0xFF2196F3),
                               ),
                             ),
                             prefixIcon: Icon(
                               Icons.lock_outline,
-                              color: Colors.black,
+                              color: themeProvider.isDarkTheme
+                              ? Colors.white
+                              : Colors.black,
                             ),
                           ),
                         ),
@@ -237,6 +280,12 @@ class _SignupScreenState extends State<SignupScreen> {
                           keyboardType: TextInputType.text,
                           obscureText: true,
                           controller: confirmPassController,
+                          style: TextStyle(
+                            fontFamily: "Poppins",
+                            color: themeProvider.isDarkTheme
+                            ? Colors.grey.shade300
+                            : Colors.grey.shade800,
+                          ),
                           onChanged: (_) {
                             checkValidation();
                           },
@@ -251,21 +300,30 @@ class _SignupScreenState extends State<SignupScreen> {
                           },
                           decoration: InputDecoration(
                             hintText: "Confirm Password",
+                            hintStyle: TextStyle(
+                              color: Color(0xFF969696)
+                            ),
                             enabledBorder: UnderlineInputBorder(
                               borderSide: BorderSide(
                                 width: 1,
-                                color: Colors.black,
+                                color: themeProvider.isDarkTheme
+                                ? Color(0xFF404040)
+                                : Colors.black,
                               ),
                             ),
                             focusedBorder: UnderlineInputBorder(
                               borderSide: BorderSide(
                                 width: 1.5,
-                                color: Color(0xFF2196F3),
+                                color: themeProvider.isDarkTheme
+                                ? Color(0xFF64B5F6)
+                                : Color(0xFF2196F3),
                               ),
                             ),
                             prefixIcon: Icon(
                               Icons.lock_outline,
-                              color: Colors.black,
+                              color: themeProvider.isDarkTheme
+                              ? Colors.white
+                              : Colors.black,
                             ),
                           ),
                         ),
@@ -319,7 +377,9 @@ class _SignupScreenState extends State<SignupScreen> {
                           : Container(),
                         ],
                       ),
-                      color: Color(0xFF2196F3),
+                      color: themeProvider.isDarkTheme
+                      ? Color(0xFF64B5F6)
+                      : Color(0xFF2196F3),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
@@ -356,19 +416,25 @@ class _SignupScreenState extends State<SignupScreen> {
                           child: Text(
                             "Login",
                             style: TextStyle(
-                              color: Colors.black,
+                              color: themeProvider.isDarkTheme
+                              ? Colors.white
+                              : Colors.black,
                               fontSize: 18,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
                           shape: RoundedRectangleBorder(
                             side: BorderSide(
-                              color: Color(0xFF2196F3),
+                              color: themeProvider.isDarkTheme
+                              ? Color(0xFF64B5F6)
+                              : Color(0xFF2196F3),
                               width: 3,
                             ),
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          splashColor: Colors.grey.shade50,
+                          splashColor: themeProvider.isDarkTheme
+                          ? Colors.grey.shade800
+                          : Colors.grey.shade50,
                         ),
                       ),
                     ],

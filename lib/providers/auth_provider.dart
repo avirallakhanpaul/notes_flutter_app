@@ -38,6 +38,7 @@ class AuthProvider with ChangeNotifier {
   void _saveUId(String uId) async {
     await _initPrefs();
     _prefs.setString(key, uId);
+    print("Id Saved!");
   }
 
   Future<void> signIn({String email, String password}) async {
@@ -51,7 +52,6 @@ class AuthProvider with ChangeNotifier {
         _saveUId(_userId);
         
         notifyListeners();
-        print("User: $_userId");
       });
     } on FirebaseAuthException catch(error) {
       return error.message;

@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import 'package:notes_app/screens/email_verification/verification.dart';
 import "package:provider/provider.dart";
 
 import 'providers/note_provider.dart';
@@ -55,6 +56,7 @@ class MyApp extends StatelessWidget {
           NoteScreen.routeName: (ctx) => NoteScreen(),
           LoginScreen.routeName: (ctx) => LoginScreen(),
           SignupScreen.routeName: (ctx) => SignupScreen(),
+          Verification.routeName: (ctx) => Verification(),
         },
       ),
     );

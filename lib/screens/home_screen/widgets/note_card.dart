@@ -29,6 +29,10 @@ class NoteCard extends StatelessWidget {
 
     return Consumer<ThemeProvider>(
       builder: (ctx, theme, child) {
+        print("Noteid: $noteId");
+        print("NoteTitle: $noteTitle");
+        print("NoteLightColor: $noteLightColor");
+        print("NoteDarkColor: $noteDarkColor");
         return Card(
           key: Key(noteId.toString()),
           color: theme.isDarkTheme

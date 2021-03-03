@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import 'package:notes_app/common_widgtes/initial_appbar.dart';
 import 'package:notes_app/providers/theme_provider.dart';
 import 'package:notes_app/screens/authentication/signup_screen.dart';
 

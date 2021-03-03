@@ -117,9 +117,11 @@ class NoteProvider with ChangeNotifier {
     }
   }
 
-  Query fetchNotes() {
-    return dbRef.child("notes").orderByChild("userId").equalTo(userId);
-  }
+  // Future<Query> fetchNotes() async {
+  //   print("NoteProvider userid:- $userId");
+  //   return dbRef.child("notes")
+  //   .orderByChild("userId").equalTo(userId);
+  // }
 
   Future<void> updateNote({String idKey, Map<String, dynamic> note}) async {
     // print("idKey: $idKey");

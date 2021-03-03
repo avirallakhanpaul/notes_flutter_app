@@ -1,6 +1,7 @@
 import "package:flutter/material.dart";
 import 'package:notes_app/providers/theme_provider.dart';
 import 'package:notes_app/screens/authentication/login_screen.dart';
+import 'package:notes_app/screens/email_verification/verification.dart';
 
 import '../../providers/auth_provider.dart';
 
@@ -20,6 +21,7 @@ class _SignupScreenState extends State<SignupScreen> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPassController = TextEditingController();
+  final emailRegEx = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
 
   final _formKey = GlobalKey<FormState>();
 
@@ -39,7 +41,7 @@ class _SignupScreenState extends State<SignupScreen> {
       return isValid;
     }
 
-    void signup({@required String email, @required String pass, @required String confirmPass}) async {
+    void signup({@required String email, @required String pass}) async {
       await authProvider.signUp(
         email: email,
         password: pass,
@@ -178,11 +180,8 @@ class _SignupScreenState extends State<SignupScreen> {
                             if(value.isEmpty) {
                               return "Please enter an email";
                             }
-                            if(!value.contains("@")) {
-                              return "Please enter a valid email";
-                            }
-                            if(!value.contains(".com")) {
-                              return "Please enter a valid email";
+                            if(!emailRegEx.hasMatch(value)) {
+                              return "Please enter a valid mail id";
                             }
                             return null;
                           },
@@ -344,7 +343,10 @@ class _SignupScreenState extends State<SignupScreen> {
                         signup(
                           email: emailController.text,
                           pass: passwordController.text,
-                          confirmPass: confirmPassController.text,
+                        );
+                        Navigator.pushReplacementNamed(
+                          context,
+                          Verification.routeName,
                         );
                       },
                       child: Row(

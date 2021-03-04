@@ -17,15 +17,8 @@ class NoteCard extends StatelessWidget {
 
     final noteId = note.id;
     final noteTitle = note.title;
-    // final noteDesc = note.desc;
     final noteLightColor = note.lightColor;
     final noteDarkColor = note.darkColor;
-
-    // final noteProvider = Provider.of<NoteProvider>(context);
-    // final noteId = noteProvider.items[index].id;
-    // final Map<String, dynamic> note = noteProvider.getNoteById(id);
-
-    // print(note.darkColor);
 
     return Consumer<ThemeProvider>(
       builder: (ctx, theme, child) {

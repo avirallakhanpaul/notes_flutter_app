@@ -3,32 +3,20 @@ import "package:provider/provider.dart";
 
 import '../models/note.dart';
 import '../providers/theme_provider.dart';
-import "../providers/note_provider.dart";
+import '../providers/auth_provider.dart';
 
-class DeleteAlertDialog extends StatelessWidget {
-
-  final Note note;
-  final bool fromNoteScreen;
-
-  DeleteAlertDialog({@required this.note, this.fromNoteScreen});
+class SignoutAlertDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
 
-    final noteProvider = Provider.of<NoteProvider>(context);
+    final authProvider = Provider.of<AuthProvider>(context);
 
-    void delNote() async {
-      print("delNote Function");
+    void signout() async {
+      print("signout Function");
 
-      if(fromNoteScreen) {
-
-        await noteProvider.deleteNote(note.id);
-
-        Navigator.of(context).pop();
-        Navigator.of(context).pop();
-      } else {
-        Navigator.of(context).pop(true);
-      }
+      await authProvider.signOut();
+      Navigator.of(context).pop();    
     }
 
     return Consumer<ThemeProvider>(
@@ -38,7 +26,7 @@ class DeleteAlertDialog extends StatelessWidget {
           ? Color(0xFF424242)
           : Colors.white,
           title: Text(
-            "Delete?",
+            "Sign Out?",
             style: TextStyle(
               fontFamily: "Poppins",
               fontSize: 20,
@@ -48,7 +36,7 @@ class DeleteAlertDialog extends StatelessWidget {
             ),
           ),
           content: Text(
-            "Remove ${note.title} permanently?",
+            "Are you sure you want to sign out?",
             style: TextStyle(
               fontFamily: "Poppins",
               fontSize: 16,
@@ -59,12 +47,12 @@ class DeleteAlertDialog extends StatelessWidget {
           ),
           actions: [
             RaisedButton(
-              onPressed: () async => delNote(),
+              onPressed: () async => signout(),
               color: theme.isDarkTheme
               ? Color(0xFFf44336)
               : Colors.red.shade700,
               child: Text(
-                "Delete",
+                "Sign Out",
                 style: TextStyle(
                   fontFamily: "Poppins",
                   fontSize: 14,

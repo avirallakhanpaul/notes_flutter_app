@@ -25,7 +25,7 @@ class NoteProvider with ChangeNotifier {
     userId = auth.userId;
   }
 
-  void addNote({BuildContext context, int index, Note deletedNote, String noteTitle = "Title", String noteDesc = ""}) async {
+  void addNote({BuildContext context, Note deletedNote, String noteTitle = "Title", String noteDesc = ""}) async {
 
     print("NoteProvider id: $userId");
 
@@ -73,35 +73,29 @@ class NoteProvider with ChangeNotifier {
       lightColor: noteLightColor,
       darkColor: noteDarkColor,
     );
-
-    if(index != null) { // UNDO Operation
-      _items.insert(index, deletedNote);
-    } else {
-
-      // final lastNoteIndex = _items.length;
-      
-      Navigator.of(context).pushNamed(
-        NoteScreen.routeName,
-        arguments: newNote,
-      );
-
-      _items.add(newNote);
-    }
+ 
+    // if(deletedNote == null) { // A New Note is Added
+    //   Navigator.of(context).pushNamed(
+    //     NoteScreen.routeName,
+    //     arguments: newNote,
+    //   );
+    // }
 
     notifyListeners();
 
-    if(index != null) { // UNDO Operation
-      DBHelper.insertToDb(
-        "user_notes", 
-        {
-          "id": deletedNote.id,
-          "title": deletedNote.title,
-          "desc": deletedNote.desc,
-          "lightColor": deletedNote.lightColor,
-          "darkColor": deletedNote.darkColor,
-        },
-      );
-    } else {
+    if(deletedNote != null) { // UNDO Operation
+
+      final key = deletedNote.id;
+
+      dbRef.child("notes").child(key).set({ // INSERT Operation
+        "id": key,
+        "userId": deletedNote.userId,
+        "title": deletedNote.title,
+        "desc": deletedNote.desc,
+        "lightColor": deletedNote.lightColor,
+        "darkColor": deletedNote.darkColor,
+      });
+    } else { // Addition of a New Note
 
       final key = dbRef.child("notes").push().path;
       final id = key.substring(6, key.length).trim();
@@ -114,6 +108,13 @@ class NoteProvider with ChangeNotifier {
         "lightColor": newNote.lightColor,
         "darkColor": newNote.darkColor,
       });
+
+      newNote.id = id;
+
+      Navigator.of(context).pushNamed(
+        NoteScreen.routeName,
+        arguments: newNote,
+      );
     }
   }
 
@@ -124,24 +125,23 @@ class NoteProvider with ChangeNotifier {
   // }
 
   Future<void> updateNote({String idKey, Map<String, dynamic> note}) async {
-    // print("idKey: $idKey");
-    // print("User ID(NoteProvider): $userId");
     await dbRef.child("notes").equalTo(userId).reference().child(idKey).update(note);
-    // dbRef.child("Notes").reference().push()
   }
 
-  Future<void> deleteNote({String tableName, String id}) async {
+  Future<void> deleteNote(String idKey) async {
+    print("idKey: $idKey");
+    await dbRef.child("notes").equalTo(userId).reference().child(idKey).remove();
 
-    final database = await DBHelper.database(tableName);
+    notifyListeners();
+    // final database = await DBHelper.database(tableName);
 
-    await database.delete(
-      tableName,
-      where: "id = ?",
-      whereArgs: [id],
-    );
+    // await database.delete(
+    //   tableName,
+    //   where: "id = ?",
+    //   whereArgs: [id],
+    // );
 
     // await fetchOrSetNotes();
-    // notifyListeners();
   }
 
   // void switchNoteColor({String tableName}) async {

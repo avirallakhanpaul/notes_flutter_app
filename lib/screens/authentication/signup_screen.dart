@@ -43,6 +43,7 @@ class _SignupScreenState extends State<SignupScreen> {
 
     void signup({@required String email, @required String pass}) async {
       await authProvider.signUp(
+        context: context,
         email: email,
         password: pass,
       );
@@ -51,11 +52,6 @@ class _SignupScreenState extends State<SignupScreen> {
         _isLoading = false;
         print("User added!");
       });
-
-      Navigator.pushReplacementNamed(
-        context, 
-        LoginScreen.routeName
-      );
     }
 
     return Scaffold(
@@ -343,10 +339,6 @@ class _SignupScreenState extends State<SignupScreen> {
                         signup(
                           email: emailController.text,
                           pass: passwordController.text,
-                        );
-                        Navigator.pushReplacementNamed(
-                          context,
-                          Verification.routeName,
                         );
                       },
                       child: Row(

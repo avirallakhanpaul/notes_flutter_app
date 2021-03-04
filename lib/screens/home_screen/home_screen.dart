@@ -1,5 +1,6 @@
 import 'package:firebase_database/firebase_database.dart';
 import "package:flutter/material.dart";
+import 'package:notes_app/common_widgtes/signout_alert_dialog.dart';
 import 'package:notes_app/models/note.dart';
 import 'package:provider/provider.dart';
 
@@ -60,33 +61,38 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ],
             ),
-            leading: Transform.scale(
-              scale: 1.2,
-              child: Switch(
-                value: theme.isDarkTheme,
-                onChanged: ((_) => theme.toggleTheme()),
-                inactiveTrackColor: Color(0xFF4D4D4D),
-                inactiveThumbColor: Color(0xFF78909C),
-                inactiveThumbImage: AssetImage(
-                  "assets/icons/lightmode.png",
-                ),
-                activeTrackColor: Color(0xFF4D4D4D),
-                activeColor: Color(0xFF42A5F5),
-                activeThumbImage: AssetImage(
-                  "assets/icons/darkmode.png",
-                ),
+            leading: IconButton(
+              icon: Icon(
+                Icons.exit_to_app_outlined,
+                color: theme.isDarkTheme
+                ? Colors.white
+                : Colors.black,
+                size: 30,
               ),
+              onPressed: () {
+                return showDialog(
+                  context: context,
+                  builder: (ctx) => SignoutAlertDialog(),
+                );
+              },
             ),
             actions: [
-              IconButton(
-                icon: Icon(
-                  Icons.exit_to_app_outlined,
-                  color: theme.isDarkTheme
-                  ? Colors.white
-                  : Colors.black,
-                  size: 30,
+              Transform.scale(
+                scale: 1.2,
+                child: Switch(
+                  value: theme.isDarkTheme,
+                  onChanged: ((_) => theme.toggleTheme()),
+                  inactiveTrackColor: Color(0xFF4D4D4D),
+                  inactiveThumbColor: Color(0xFF78909C),
+                  inactiveThumbImage: AssetImage(
+                    "assets/icons/lightmode.png",
+                  ),
+                  activeTrackColor: Color(0xFF4D4D4D),
+                  activeColor: Color(0xFF42A5F5),
+                  activeThumbImage: AssetImage(
+                    "assets/icons/darkmode.png",
+                  ),
                 ),
-                onPressed: () => authProvider.signOut(),
               ),
             ],
             centerTitle: true,
@@ -109,7 +115,7 @@ class _HomeScreenState extends State<HomeScreen> {
             : Colors.white,
           body: Builder(
             builder: (ctx) {
-              // print("Userid: -- ${authProvider.userId}");
+              // debugPrint("Userid: -- ${authProvider.userId}");
               return SingleChildScrollView(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
@@ -128,14 +134,14 @@ class _HomeScreenState extends State<HomeScreen> {
                         .equalTo(noteProvider.userId)
                         .onValue,
                         builder: (BuildContext ctx, AsyncSnapshot<Event> snapshot) {
-                          print("Snapshot DATA: ${snapshot.data.snapshot.value}");
+                          debugPrint("Snapshot DATA: ${snapshot.data.snapshot.value}");
                           if(snapshot.data.snapshot.value == null) {
-                            print("No Data");
+                            debugPrint("No Data");
                             return Container();
                           } else {
-                            print("Snapshot Value = ${snapshot.data.snapshot.value.values.toList()}");
+                            debugPrint("Snapshot Value = ${snapshot.data.snapshot.value.values.toList()}");
                             List<dynamic> noteData = snapshot.data.snapshot.value.values.toList();
-                            print("NoteData Length:- ${noteData.length}");
+                            debugPrint("NoteData Length:- ${noteData.length}");
                             return Consumer<NoteProvider>(
                               builder: (ctx, note, child) => noteData.length <= 0
                                 ? Container()
@@ -169,8 +175,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                           direction: DismissDirection.endToStart,
                                           confirmDismiss: (direction) async {
 
+                                            debugPrint("NoteData MAP: ${noteData[index]}");
+
                                             final delAlertDialog = DeleteAlertDialog(
-                                              noteIndex: index.toString(),
+                                              note: Note.fromMap(noteData[index]),
                                               fromNoteScreen: false,
                                             );
 
@@ -183,12 +191,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
                                             Scaffold.of(ctx).removeCurrentSnackBar();
 
-                                            final deletedNote = note.items[index];
+                                            final deletedNote = noteData[index];
 
-                                            note.deleteNote(
-                                              tableName: "user_notes",
-                                              id: note.items[index].id,
-                                            );
+                                            note.deleteNote(noteData[index]["id"]);
 
                                             return Scaffold.of(ctx).showSnackBar(
                                               SnackBar(
@@ -205,8 +210,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   label: "Undo",
                                                   onPressed: () {
                                                     note.addNote(
-                                                      index: index,
-                                                      deletedNote: deletedNote,
+                                                      deletedNote: Note.fromMap(deletedNote),
                                                     );
                                                   },
                                                 ),
@@ -214,15 +218,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                             );
                                           },
                                           child: NoteCard(
-                                            // noteData["id"],
-                                            Note(
-                                              id: noteData[index]["id"].toString(),
-                                              userId: noteData[index]["userId"],
-                                              title: noteData[index]["title"],
-                                              desc: noteData[index]["desc"],
-                                              lightColor: noteData[index]["lightColor"],
-                                              darkColor: noteData[index]["darkColor"],
-                                            ),
+                                            Note.fromMap(noteData[index]),
+                                            // Note(
+                                            //   id: noteData[index]["id"].toString(),
+                                            //   userId: noteData[index]["userId"],
+                                            //   title: noteData[index]["title"],
+                                            //   desc: noteData[index]["desc"],
+                                            //   lightColor: noteData[index]["lightColor"],
+                                            //   darkColor: noteData[index]["darkColor"],
+                                            // ),
                                           ),
                                         ),
                                         SizedBox(

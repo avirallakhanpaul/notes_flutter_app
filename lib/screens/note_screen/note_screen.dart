@@ -34,7 +34,6 @@ class _NoteScreenState extends State<NoteScreen> {
   Widget build(BuildContext context) {
 
     final noteProvider = Provider.of<NoteProvider>(context);
-    // final Args note = ModalRoute.of(context).settings.arguments;
     final Note note = ModalRoute.of(context).settings.arguments;
 
     titleController.text = note.title;
@@ -46,13 +45,14 @@ class _NoteScreenState extends State<NoteScreen> {
     void popupMenuAction(optSelected) async {
 
       if(optSelected == PopupOptions.delete) {
+        print("Del Operation Selected");
         
         final DeleteAlertDialog delAlertDialog = DeleteAlertDialog(
-          noteIndex: note.id,
+          note: note,
           fromNoteScreen: true,
         );
 
-        await showDialog(
+        showDialog(
           context: context,
           builder: (BuildContext context) {
             return delAlertDialog;
@@ -80,10 +80,6 @@ class _NoteScreenState extends State<NoteScreen> {
           },
         );
 
-        // setState(() {
-        //   isSaving = false;
-        // });
-
         Fluttertoast.showToast(
           msg: "Note Saved",
           fontSize: 16,
@@ -92,6 +88,7 @@ class _NoteScreenState extends State<NoteScreen> {
         );
 
         if(!isPopScope || isPopScope == null) {
+          print("No pop Scope");
           Navigator.pop(context);
         } else {
           return;
@@ -117,7 +114,7 @@ class _NoteScreenState extends State<NoteScreen> {
                   size: 20,
                   color: Colors.white
                 ),
-                onPressed: () => saveNote(),
+                onPressed: () => saveNote(isPopScope: false),
               ),
               title: Consumer<NoteProvider>(
                 builder: (ctx, note, child) {
@@ -147,7 +144,7 @@ class _NoteScreenState extends State<NoteScreen> {
                     Icons.done,
                     color: Colors.white,
                   ),
-                  onPressed: () => saveNote(),
+                  onPressed: () => saveNote(isPopScope: false),
                 ),
                 PopupMenuButton<PopupOptions>(
                   icon: Icon(

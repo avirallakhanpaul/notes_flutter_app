@@ -20,6 +20,9 @@ class AuthProvider with ChangeNotifier {
   String _userId;
   String get userId => _userId;
 
+  // bool _isLoggedIn = false;
+  // bool get isLoggedIn => _isLoggedIn;
+
   Future<void> _initPrefs() async {
     if(_prefs == null) {
       _prefs = await SharedPreferences.getInstance();
@@ -31,6 +34,9 @@ class AuthProvider with ChangeNotifier {
   void _loadFromPrefs() async {
     await _initPrefs();
     _userId = _prefs.getString(key) ?? null;
+    if(_userId != null) {
+      // _isLoggedIn = true;
+    }
     print("Stored user info: $_userId");
     notifyListeners();
   }
@@ -50,12 +56,15 @@ class AuthProvider with ChangeNotifier {
       ).then((UserCredential userCred) {
         _userId = userCred.user.uid;
         _saveUId(_userId);
-        
+        // _isLoggedIn = true;
+
         notifyListeners();
       });
     } on FirebaseAuthException catch(error) {
       return error.message;
     }
+
+    notifyListeners();
   }
 
   Future<void> signUp({@required BuildContext context, @required String email, @required String password}) async {
@@ -67,7 +76,8 @@ class AuthProvider with ChangeNotifier {
       ).then((UserCredential userCred) {
 
         _userId = userCred.user.uid;
-        print("Signed Up User Id: $_userId");
+        debugPrint("Signed Up User Id: $_userId");
+        debugPrint("Signed Up Firebase User: ${userCred.user}");
 
         Navigator.pushReplacementNamed(
           context,
@@ -81,8 +91,13 @@ class AuthProvider with ChangeNotifier {
 
   Future<void> signOut() async {
     await _firebaseAuth.signOut();
+
+    notifyListeners();
+
     await _initPrefs();
     _prefs.setString(key, null);
+
+    // _isLoggedIn = false;
     print("User Signed Out!");
   }
 }

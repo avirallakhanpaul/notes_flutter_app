@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import 'package:notes_app/helpers/note_screen_agruments.dart';
 import 'package:notes_app/models/note.dart';
 import 'package:notes_app/providers/theme_provider.dart';
 import 'package:provider/provider.dart';
@@ -34,7 +35,10 @@ class _NoteScreenState extends State<NoteScreen> {
   Widget build(BuildContext context) {
 
     final noteProvider = Provider.of<NoteProvider>(context);
-    final Note note = ModalRoute.of(context).settings.arguments;
+
+    final NoteScreenArgumets noteArgs = ModalRoute.of(context).settings.arguments;
+    final Note note = noteArgs.note;
+    final bool isNewNote = noteArgs.isNewNote ?? true;
 
     titleController.text = note.title;
     descController.text = note.desc;
@@ -126,6 +130,10 @@ class _NoteScreenState extends State<NoteScreen> {
                       fontWeight: FontWeight.w500,
                     ),
                     controller: titleController,
+                    autofocus: isNewNote
+                    ? true
+                    : false,
+                    onSubmitted: (value) => saveNote(isPopScope: true),
                     decoration: InputDecoration(
                       // hintText: "Title",
                       // hintStyle: TextStyle(),
@@ -197,6 +205,7 @@ class _NoteScreenState extends State<NoteScreen> {
                     child: TextField(
                       maxLines: null,
                       controller: descController,
+                      onSubmitted: (value) => saveNote(isPopScope: true),
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         hintText: "Description",

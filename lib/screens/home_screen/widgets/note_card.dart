@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import 'package:notes_app/helpers/note_screen_agruments.dart';
 import 'package:notes_app/models/note.dart';
 import "package:provider/provider.dart";
 
@@ -51,7 +52,10 @@ class NoteCard extends StatelessWidget {
             onTap: () {
               Navigator.of(context).pushNamed(
                 NoteScreen.routeName,
-                arguments: note,
+                arguments: NoteScreenArgumets(
+                  note: note,
+                  isNewNote: false,
+                ),
               );
             },
           ),

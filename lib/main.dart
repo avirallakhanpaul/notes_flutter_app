@@ -69,6 +69,8 @@ class Authentication extends StatelessWidget {
   Widget build(BuildContext context) {
 
     final _firebaseUser = context.watch<User>();
+    // final _firebaseUser = Provider.of<AuthProvider>(context).
+    // debugPrint("Main User:- $_firebaseUser");
 
     if(_firebaseUser != null) {
       print("Home Screen");

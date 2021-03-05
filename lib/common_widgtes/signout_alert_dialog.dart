@@ -1,7 +1,6 @@
 import "package:flutter/material.dart";
 import "package:provider/provider.dart";
 
-import '../models/note.dart';
 import '../providers/theme_provider.dart';
 import '../providers/auth_provider.dart';
 
@@ -16,7 +15,8 @@ class SignoutAlertDialog extends StatelessWidget {
       print("signout Function");
 
       await authProvider.signOut();
-      Navigator.of(context).pop();    
+      Navigator.of(context).pop(true);
+      // Navigator.of(context).pushReplacementNamed(LoginScreen.routeName);
     }
 
     return Consumer<ThemeProvider>(

@@ -1,12 +1,11 @@
 import "package:flutter/material.dart";
-import 'package:notes_app/providers/theme_provider.dart';
-import 'package:notes_app/screens/authentication/login_screen.dart';
-import 'package:notes_app/screens/email_verification/verification.dart';
-
-import '../../providers/auth_provider.dart';
-
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
+
+import 'login_screen.dart';
+import '../../providers/theme_provider.dart';
+import '../../providers/auth_provider.dart';
+
 
 class SignupScreen extends StatefulWidget {
 

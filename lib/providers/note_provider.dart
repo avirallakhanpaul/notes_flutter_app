@@ -2,9 +2,9 @@ import 'dart:math';
 
 import "package:flutter/material.dart";
 import "package:firebase_database/firebase_database.dart";
-import 'package:notes_app/providers/auth_provider.dart';
+import 'package:notes_app/helpers/note_screen_agruments.dart';
 
-import '../helpers/db_helper.dart';
+import 'auth_provider.dart';
 import '../models/note.dart';
 import '../screens/note_screen/note_screen.dart';
 
@@ -15,9 +15,6 @@ class NoteProvider with ChangeNotifier {
 
   final dbRef = FirebaseDatabase.instance.reference();
   String userId;
-
-  List<Note> _items = [];
-  List<Note> items = [];
 
   bool isDarkMode;
 
@@ -113,16 +110,13 @@ class NoteProvider with ChangeNotifier {
 
       Navigator.of(context).pushNamed(
         NoteScreen.routeName,
-        arguments: newNote,
+        arguments: NoteScreenArgumets(
+          note: newNote,
+          isNewNote: true,
+        ),
       );
     }
   }
-
-  // Future<Query> fetchNotes() async {
-  //   print("NoteProvider userid:- $userId");
-  //   return dbRef.child("notes")
-  //   .orderByChild("userId").equalTo(userId);
-  // }
 
   Future<void> updateNote({String idKey, Map<String, dynamic> note}) async {
     await dbRef.child("notes").equalTo(userId).reference().child(idKey).update(note);

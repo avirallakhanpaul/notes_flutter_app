@@ -1,14 +1,13 @@
 import 'package:firebase_database/firebase_database.dart';
 import "package:flutter/material.dart";
-import 'package:notes_app/common_widgtes/signout_alert_dialog.dart';
-import 'package:notes_app/models/note.dart';
 import 'package:provider/provider.dart';
 
-import '../../providers/auth_provider.dart';
+import "./widgets/note_card.dart";
+import '../../common_widgtes/signout_alert_dialog.dart';
+import '../../common_widgtes/delete_alert_dialog.dart';
+import '../../models/note.dart';
 import '../../providers/note_provider.dart';
 import '../../providers/theme_provider.dart';
-import '../../common_widgtes/delete_alert_dialog.dart';
-import "./widgets/note_card.dart";
 
 class HomeScreen extends StatefulWidget {
 
@@ -20,11 +19,20 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
 
+  FirebaseDatabase firebaseInstance;
+
+  @override
+  void initState() {
+    firebaseInstance = FirebaseDatabase.instance;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
+
+    // FirebaseDatabase firebaseInstance = FirebaseDatabase.instance;
     
     final noteProvider = Provider.of<NoteProvider>(context, listen: false);
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
     
     return Consumer<ThemeProvider>(
       builder: (ctx, theme, _) {
@@ -115,7 +123,6 @@ class _HomeScreenState extends State<HomeScreen> {
             : Colors.white,
           body: Builder(
             builder: (ctx) {
-              // debugPrint("Userid: -- ${authProvider.userId}");
               return SingleChildScrollView(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
@@ -126,22 +133,28 @@ class _HomeScreenState extends State<HomeScreen> {
                       SizedBox(
                         height: 40,
                       ),
+                      noteProvider.userId == null
+                      ? Container()
+                      :
                       StreamBuilder(
-                        stream: FirebaseDatabase.instance
+                        stream: firebaseInstance
                         .reference()
                         .child("notes")
                         .orderByChild("userId")
                         .equalTo(noteProvider.userId)
                         .onValue,
                         builder: (BuildContext ctx, AsyncSnapshot<Event> snapshot) {
-                          debugPrint("Snapshot DATA: ${snapshot.data.snapshot.value}");
-                          if(snapshot.data.snapshot.value == null) {
+                          // debugPrint("Snapshot DATA: ${snapshot.data.snapshot.value}");
+                          // debugPrint("Snapshot.data.snapshot: ${snapshot.data.snapshot}");
+                          // debugPrint(snapshot.connectionState.toString());
+                          if(snapshot.connectionState == ConnectionState.waiting) {
+                            return Center(child: CircularProgressIndicator());
+                          } else if(snapshot.connectionState == ConnectionState.active && snapshot.data.snapshot.value == null) {
                             debugPrint("No Data");
                             return Container();
                           } else {
-                            debugPrint("Snapshot Value = ${snapshot.data.snapshot.value.values.toList()}");
+                            // debugPrint("Snapshot Value = ${snapshot.data.snapshot.value.values.toList()}");
                             List<dynamic> noteData = snapshot.data.snapshot.value.values.toList();
-                            debugPrint("NoteData Length:- ${noteData.length}");
                             return Consumer<NoteProvider>(
                               builder: (ctx, note, child) => noteData.length <= 0
                                 ? Container()

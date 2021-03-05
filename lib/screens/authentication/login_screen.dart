@@ -1,12 +1,10 @@
 import "package:flutter/material.dart";
-import 'package:notes_app/common_widgtes/initial_appbar.dart';
-import 'package:notes_app/providers/theme_provider.dart';
-import 'package:notes_app/screens/authentication/signup_screen.dart';
-
-import '../../providers/auth_provider.dart';
-
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
+
+import 'signup_screen.dart';
+import '../../providers/theme_provider.dart';
+import '../../providers/auth_provider.dart';
 
 class LoginScreen extends StatefulWidget {
   static const routeName = "/login";
@@ -19,6 +17,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final emailRegEx = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
 
   final _formKey = GlobalKey<FormState>();
 
@@ -44,11 +43,9 @@ class _LoginScreenState extends State<LoginScreen> {
           password: pass,
         );
 
-        // setState(() {
-        //   _isLoading = false;
-        // });
-
-        print("Login Successful!");
+        // if(authProvider.isLoggedIn) {
+        //   Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
+        // }
       }
     }
 
@@ -175,11 +172,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             if(value.isEmpty) {
                               return "Please enter an email";
                             }
-                            if(!value.contains("@")) {
-                              return "Please enter a valid email";
-                            }
-                            if(!value.contains(".com")) {
-                              return "Please enter a valid email";
+                            if(!emailRegEx.hasMatch(value)) {
+                              return "Please enter a valid mail id";
                             }
                             return null;
                           },

@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:notes_app/providers/note_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -23,14 +22,10 @@ class _VerificationState extends State<Verification> {
   User user;
   Timer timer;
 
-  String email;
-  String pass;
-
   @override
   void initState() {
 
     user = auth.currentUser;
-    print("initState User:- $user");
     user.sendEmailVerification();
 
     timer = Timer.periodic(Duration(seconds: 2), (timer) => checkEmailVerified());
@@ -51,7 +46,6 @@ class _VerificationState extends State<Verification> {
 
     if(user.emailVerified) {
       timer.cancel();
-      // await NoteProvider
       Navigator.of(context).pushReplacementNamed(LoginScreen.routeName);
     }
   }
@@ -105,123 +99,114 @@ class _VerificationState extends State<Verification> {
           SizedBox(
             height: mediaQuery.height * 0.05,
           ),
-          Flexible(
-            flex: 3,
-            child: RichText(
-              text: TextSpan(
-                text: "A",
+          RichText(
+            text: TextSpan(
+              text: "A",
+              style: TextStyle(
+                fontFamily: "Poppins",
+                fontSize: 24,
+                fontWeight: FontWeight.w700,
+                color: Color(0xFF858585),
+              ),
+              children: <TextSpan>[
+                TextSpan(
+                  text: "\tverification mail",
+                  style: TextStyle(
+                    fontFamily: "Poppins",
+                    fontSize: 24,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFF2196F3),
+                  ),
+                ),
+                TextSpan(
+                  text: "\thas been sent to",
+                  style: TextStyle(
+                    fontFamily: "Poppins",
+                    fontSize: 24,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFF858585),
+                  ),
+                ),
+                TextSpan(
+                  text: "\t${user.email}",
+                  style: TextStyle(
+                    fontFamily: "Poppins",
+                    fontSize: 24,
+                    fontWeight: FontWeight.w700,
+                    color: themeProvider.isDarkTheme
+                    ? Colors.white
+                    : Colors.black,
+                  ),
+                ),
+                TextSpan(
+                  text: ", please verify to continue",
+                  style: TextStyle(
+                    fontFamily: "Poppins",
+                    fontSize: 24,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFF2196F3),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(
+            height: mediaQuery.height * 0.05,
+          ),
+          Text(
+            "You will be redirected to your notes automatically once the mail id is verified",
+            style: TextStyle(
+              fontFamily: "Poppins",
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: Color(0xFF858585),
+            ),
+          ),
+          SizedBox(
+            height: mediaQuery.height * 0.2,
+          ),
+          Column(
+            children: <Widget>[
+              Text(
+                "Didn't recieve the mail?",
                 style: TextStyle(
                   fontFamily: "Poppins",
-                  fontSize: 24,
+                  fontSize: 16,
                   fontWeight: FontWeight.w700,
                   color: Color(0xFF858585),
                 ),
-                children: <TextSpan>[
-                  TextSpan(
-                    text: "\tverification mail",
-                    style: TextStyle(
-                      fontFamily: "Poppins",
-                      fontSize: 24,
-                      fontWeight: FontWeight.w700,
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Container(
+                width: double.infinity,
+                child: FlatButton(
+                  padding: EdgeInsets.symmetric(
+                    vertical: 10,
+                  ),
+                  onPressed: () => Navigator.of(context).pushReplacementNamed(SignupScreen.routeName),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    side: BorderSide(
                       color: Color(0xFF2196F3),
+                      width: 3,
                     ),
                   ),
-                  TextSpan(
-                    text: "\thas been sent to",
+                  child: Text(
+                    "Back",
                     style: TextStyle(
                       fontFamily: "Poppins",
-                      fontSize: 24,
-                      fontWeight: FontWeight.w700,
-                      color: Color(0xFF858585),
-                    ),
-                  ),
-                  TextSpan(
-                    text: "\t${user.email}",
-                    style: TextStyle(
-                      fontFamily: "Poppins",
-                      fontSize: 24,
+                      fontSize: 20,
                       fontWeight: FontWeight.w700,
                       color: themeProvider.isDarkTheme
                       ? Colors.white
                       : Colors.black,
                     ),
                   ),
-                  TextSpan(
-                    text: ", please verify to continue",
-                    style: TextStyle(
-                      fontFamily: "Poppins",
-                      fontSize: 24,
-                      fontWeight: FontWeight.w700,
-                      color: Color(0xFF2196F3),
-                    ),
-                  ),
-                ],
+                ),
               ),
-            ),
-          ),
-          SizedBox(
-            height: mediaQuery.height * 0.05,
-          ),
-          Flexible(
-            flex: 1,
-            child: Text(
-              "You will be redirected to your notes automatically once the mail id is verified",
-              style: TextStyle(
-                fontFamily: "Poppins",
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: Color(0xFF858585),
-              ),
-            ),
-          ),
-          SizedBox(
-            height: mediaQuery.height * 0.2,
-          ),
-          Flexible(
-            flex: 2,
-            child: Column(
-              children: <Widget>[
-                Text(
-                  "Didn't recieve the mail?",
-                  style: TextStyle(
-                    fontFamily: "Poppins",
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    color: Color(0xFF858585),
-                  ),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Container(
-                  width: double.infinity,
-                  child: FlatButton(
-                    padding: EdgeInsets.symmetric(
-                      vertical: 10,
-                    ),
-                    onPressed: () => Navigator.of(context).pushReplacementNamed(SignupScreen.routeName),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      side: BorderSide(
-                        color: Color(0xFF2196F3),
-                        width: 3,
-                      ),
-                    ),
-                    child: Text(
-                      "Back",
-                      style: TextStyle(
-                        fontFamily: "Poppins",
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                        color: themeProvider.isDarkTheme
-                        ? Colors.white
-                        : Colors.black,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            ],
           ),
         ],
       ),

@@ -6,6 +6,9 @@ import '../providers/auth_provider.dart';
 
 class SignoutAlertDialog extends StatelessWidget {
 
+  final Function signOutFunction;
+  SignoutAlertDialog({this.signOutFunction});
+
   @override
   Widget build(BuildContext context) {
 
@@ -14,7 +17,7 @@ class SignoutAlertDialog extends StatelessWidget {
     void signout() async {
       print("signout Function");
 
-      await authProvider.signOut();
+      await authProvider.signOut(userSignedOut: signOutFunction);
       Navigator.of(context).pop(true);
       // Navigator.of(context).pushReplacementNamed(LoginScreen.routeName);
     }

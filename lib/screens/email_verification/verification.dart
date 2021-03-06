@@ -6,11 +6,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 import '../../providers/theme_provider.dart';
 import '../authentication/signup_screen.dart';
-import '../authentication/login_screen.dart';
 
 class Verification extends StatefulWidget {
 
   static const routeName = "/verification";
+
+  final Function userVerified;
+  Verification({this.userVerified});
 
   @override
   _VerificationState createState() => _VerificationState();
@@ -46,7 +48,7 @@ class _VerificationState extends State<Verification> {
 
     if(user.emailVerified) {
       timer.cancel();
-      Navigator.of(context).pushReplacementNamed(LoginScreen.routeName);
+      widget.userVerified();
     }
   }
 

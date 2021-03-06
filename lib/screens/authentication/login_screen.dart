@@ -2,11 +2,16 @@ import "package:flutter/material.dart";
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
-import 'signup_screen.dart';
 import '../../providers/theme_provider.dart';
 import '../../providers/auth_provider.dart';
 
 class LoginScreen extends StatefulWidget {
+
+  final Function signedInFunction;
+  final Function toSingupPage;
+
+  LoginScreen({this.signedInFunction, this.toSingupPage});
+
   static const routeName = "/login";
 
   @override
@@ -41,6 +46,7 @@ class _LoginScreenState extends State<LoginScreen> {
         await authProvider.signIn(
           email: email,
           password: pass,
+          userSignedIn: widget.signedInFunction,
         );
 
         // if(authProvider.isLoggedIn) {
@@ -342,12 +348,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         width: double.infinity,
                         height: 45,
                         child: FlatButton(
-                          onPressed: () {
-                            Navigator.pushReplacementNamed(
-                              context,
-                              SignupScreen.routeName,
-                            );
-                          },
+                          onPressed: () => widget.toSingupPage(),
                           child: Text(
                             "Signup",
                             style: TextStyle(

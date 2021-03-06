@@ -13,6 +13,9 @@ class HomeScreen extends StatefulWidget {
 
   static const routeName = "/home";
 
+  final Function signOutFunction;
+  HomeScreen({this.signOutFunction});
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -80,7 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
               onPressed: () {
                 return showDialog(
                   context: context,
-                  builder: (ctx) => SignoutAlertDialog(),
+                  builder: (ctx) => SignoutAlertDialog(signOutFunction: widget.signOutFunction,),
                 );
               },
             ),

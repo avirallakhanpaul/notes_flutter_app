@@ -1,18 +1,22 @@
 import "package:flutter/material.dart";
 
 import "package:firebase_auth/firebase_auth.dart";
-import 'package:notes_app/screens/email_verification/verification.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class AuthProvider with ChangeNotifier {
+abstract class AuthBaseClass {
+  Future<String> getCurrentUser();
+}
 
-  FirebaseAuth _firebaseAuth;
+class AuthProvider with ChangeNotifier implements AuthBaseClass {
+
+  FirebaseAuth firebaseAuth;
   
-  AuthProvider(this._firebaseAuth) {
+  AuthProvider({this.firebaseAuth}) {
     _loadFromPrefs();
+    print("FirebaseAuth: $firebaseAuth");
   }
 
-  Stream<User> get authStateChanges => _firebaseAuth.authStateChanges();
+  Stream<User> get authStateChanges => firebaseAuth.authStateChanges();
 
   SharedPreferences _prefs;
   String key = "uId";
@@ -20,8 +24,15 @@ class AuthProvider with ChangeNotifier {
   String _userId;
   String get userId => _userId;
 
-  // bool _isLoggedIn = false;
-  // bool get isLoggedIn => _isLoggedIn;
+  Future<String> getCurrentUser() async {
+    // print("uId in Auth: ${firebaseAuth.currentUser.uid}");
+    final user = firebaseAuth.currentUser;
+    if(user == null) {
+      return null;
+    } else {
+      return user.uid.toString();
+    }
+  }
 
   Future<void> _initPrefs() async {
     if(_prefs == null) {
@@ -34,9 +45,6 @@ class AuthProvider with ChangeNotifier {
   void _loadFromPrefs() async {
     await _initPrefs();
     _userId = _prefs.getString(key) ?? null;
-    if(_userId != null) {
-      // _isLoggedIn = true;
-    }
     print("Stored user info: $_userId");
     notifyListeners();
   }
@@ -47,17 +55,16 @@ class AuthProvider with ChangeNotifier {
     print("Id Saved!");
   }
 
-  Future<void> signIn({String email, String password}) async {
+  Future<void> signIn({String email, String password, VoidCallback userSignedIn}) async {
 
     try {
-      await _firebaseAuth.signInWithEmailAndPassword(
+      await firebaseAuth.signInWithEmailAndPassword(
         email: email,
         password: password,
       ).then((UserCredential userCred) {
         _userId = userCred.user.uid;
         _saveUId(_userId);
-        // _isLoggedIn = true;
-
+        userSignedIn();
         notifyListeners();
       });
     } on FirebaseAuthException catch(error) {
@@ -67,10 +74,10 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> signUp({@required BuildContext context, @required String email, @required String password}) async {
+  Future<void> signUp({@required BuildContext context, VoidCallback verify, @required String email, @required String password}) async {
 
     try {
-      await _firebaseAuth.createUserWithEmailAndPassword(
+      await firebaseAuth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       ).then((UserCredential userCred) {
@@ -79,25 +86,25 @@ class AuthProvider with ChangeNotifier {
         debugPrint("Signed Up User Id: $_userId");
         debugPrint("Signed Up Firebase User: ${userCred.user}");
 
-        Navigator.pushReplacementNamed(
-          context,
-          Verification.routeName,
-        );
+        verify();
+
+        // Navigator.pushReplacementNamed(
+        //   context,
+        //   Verification.routeName,
+        // );
       });
     } on FirebaseAuthException catch(error) {
       return error.message;
     }
   }
 
-  Future<void> signOut() async {
-    await _firebaseAuth.signOut();
+  Future<void> signOut({VoidCallback userSignedOut}) async {
 
-    notifyListeners();
-
+    await firebaseAuth.signOut();
     await _initPrefs();
     _prefs.setString(key, null);
-
-    // _isLoggedIn = false;
     print("User Signed Out!");
+    userSignedOut();
+    notifyListeners();
   }
 }

@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
-import 'package:notes_app/screens/email_verification/verification.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import "package:provider/provider.dart";
 
 import 'providers/note_provider.dart';
@@ -9,9 +10,9 @@ import 'screens/home_screen/home_screen.dart';
 import "screens/note_screen/note_screen.dart";
 import "screens/authentication/login_screen.dart";
 import 'screens/authentication/signup_screen.dart';
+import 'screens/email_verification/verification.dart';
+import 'screens/root_page.dart';
 
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,7 +29,7 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider<NoteProvider>(create: (context) => NoteProvider(),),
         ChangeNotifierProvider<ThemeProvider>(create: (context) => ThemeProvider(),),
-        ChangeNotifierProvider<AuthProvider>(create: (context) => AuthProvider(FirebaseAuth.instance),),
+        ChangeNotifierProvider<AuthProvider>(create: (context) => AuthProvider(firebaseAuth: FirebaseAuth.instance),),
         ChangeNotifierProxyProvider<ThemeProvider, NoteProvider>(
           create: (context) => NoteProvider(),
           update: (ctx, theme, note) {
@@ -68,16 +69,16 @@ class Authentication extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    final _firebaseUser = context.watch<User>();
-    // final _firebaseUser = Provider.of<AuthProvider>(context).
-    // debugPrint("Main User:- $_firebaseUser");
+    // final _firebaseUser = context.watch<User>();
 
-    if(_firebaseUser != null) {
-      print("Home Screen");
-      return HomeScreen();
-    } else {
-      print("Login Screen");
-      return LoginScreen();
-    }
+    // if(_firebaseUser != null) {
+    //   print("Home Screen");
+    //   return HomeScreen();
+    // } else {
+    //   print("Login Screen");
+    //   return LoginScreen();
+    // }
+
+    return RootPage(auth: AuthProvider(firebaseAuth: FirebaseAuth.instance));
   }
 }

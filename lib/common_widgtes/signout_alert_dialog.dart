@@ -15,11 +15,9 @@ class SignoutAlertDialog extends StatelessWidget {
     final authProvider = Provider.of<AuthProvider>(context);
 
     void signout() async {
-      print("signout Function");
 
       await authProvider.signOut(userSignedOut: signOutFunction);
       Navigator.of(context).pop(true);
-      // Navigator.of(context).pushReplacementNamed(LoginScreen.routeName);
     }
 
     return Consumer<ThemeProvider>(

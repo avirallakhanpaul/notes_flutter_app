@@ -1,5 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import "package:flutter/material.dart";
 import 'package:flutter_svg/svg.dart';
+import 'package:notes_app/helpers/authException.dart';
+import 'package:notes_app/helpers/networkException.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/theme_provider.dart';
@@ -29,6 +32,8 @@ class _SignupScreenState extends State<SignupScreen> {
 
   var _isLoading = false;
 
+  var errorMessage = "";
+
   @override
   Widget build(BuildContext context) {
 
@@ -43,13 +48,43 @@ class _SignupScreenState extends State<SignupScreen> {
       return isValid;
     }
 
-    void signup({@required String email, @required String pass}) async {
-      await authProvider.signUp(
-        context: context,
-        email: email,
-        password: pass,
-        verify: widget.userSignedUp,
+    void showErrorSnackBar(String error) {
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          elevation: 0.0,
+          backgroundColor: Colors.red.shade800,
+          content: Text(
+            error,
+            style: TextStyle(
+              fontSize: 18,
+            ),
+          ),
+        ),
       );
+    }
+
+    void signup({@required String email, @required String pass}) async {
+      try {
+        await authProvider.signUp(
+          context: context,
+          email: email,
+          password: pass,
+          verify: widget.userSignedUp,
+        );
+      } on FirebaseAuthException catch(e) {
+        if(e.message.contains("email address is already in use")) {
+          errorMessage = "Email id is already in use";
+        } 
+        print(e.message);
+        showErrorSnackBar(errorMessage);
+      } on NetworkException catch(e) {
+        errorMessage = e.errorText;
+        showErrorSnackBar(errorMessage);
+      } on AuthException catch(e) {
+        errorMessage = e.errorText;
+        showErrorSnackBar(errorMessage);
+      }
 
       setState(() {
         _isLoading = false;
@@ -126,7 +161,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       text: TextSpan(
                         children: <TextSpan>[
                           TextSpan(
-                            text: "Signup",
+                            text: "Create an account",
                             style: TextStyle(
                               fontFamily: "Poppins",
                               fontSize: 24,
@@ -179,9 +214,9 @@ class _SignupScreenState extends State<SignupScreen> {
                             if(value.isEmpty) {
                               return "Please enter an email";
                             }
-                            if(!emailRegEx.hasMatch(value)) {
-                              return "Please enter a valid mail id";
-                            }
+                            // if(!emailRegEx.hasMatch(value)) {
+                            //   return "Please enter a valid mail id";
+                            // }
                             return null;
                           },
                           decoration: InputDecoration(
@@ -234,12 +269,12 @@ class _SignupScreenState extends State<SignupScreen> {
                             if(value.isEmpty) {
                               return "Please enter a password";
                             }
-                            if(!(value.length > 3)) {
-                              return "Password must be atleast 4 characters long";
-                            }
-                            if(!(value.length <= 15)) {
-                              return "Password must not exceed 15 characters";
-                            }
+                            // if(!(value.length > 3)) {
+                            //   return "Password must be atleast 4 characters long";
+                            // }
+                            // if(!(value.length <= 15)) {
+                            //   return "Password must not exceed 15 characters";
+                            // }
                             return null;
                           },
                           decoration: InputDecoration(

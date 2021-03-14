@@ -5,14 +5,14 @@ import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import '../../providers/theme_provider.dart';
-import '../authentication/signup_screen.dart';
 
 class Verification extends StatefulWidget {
 
   static const routeName = "/verification";
 
   final Function userVerified;
-  Verification({this.userVerified});
+  final Function toSignUpPage;
+  Verification({this.userVerified, this.toSignUpPage});
 
   @override
   _VerificationState createState() => _VerificationState();
@@ -187,7 +187,7 @@ class _VerificationState extends State<Verification> {
                   padding: EdgeInsets.symmetric(
                     vertical: 10,
                   ),
-                  onPressed: () => Navigator.of(context).pushReplacementNamed(SignupScreen.routeName),
+                  onPressed: () => widget.toSignUpPage(),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                     side: BorderSide(

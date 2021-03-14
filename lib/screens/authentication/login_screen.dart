@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import "package:flutter/material.dart";
 import 'package:flutter_svg/svg.dart';
+import 'package:notes_app/helpers/networkException.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/theme_provider.dart';
@@ -27,6 +29,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
 
   var _isLoading = false;
+  var errorMessage = "";
 
   @override
   Widget build(BuildContext context) {
@@ -40,18 +43,51 @@ class _LoginScreenState extends State<LoginScreen> {
       return isValid;
     }
 
+    void showErrorSnackBar(String error) {
+      ScaffoldMessenger.of(context).removeCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          elevation: 0.0,
+          backgroundColor: Colors.red.shade800,
+          content: Text(
+            error,
+            style: TextStyle(
+              fontSize: 18,
+            ),
+          ),
+        ),
+      );
+    }
+
     void signin({@required String email, @required String pass}) async {
 
-      if(_formKey.currentState.validate()) {
-        await authProvider.signIn(
-          email: email,
-          password: pass,
-          userSignedIn: widget.signedInFunction,
-        );
-
-        // if(authProvider.isLoggedIn) {
-        //   Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
-        // }
+      if((email.isEmpty || pass.isEmpty) || (email.isEmpty && pass.isEmpty)) {
+        setState(() {
+          _isLoading = false;        
+        });
+        return;
+      } else if(_formKey.currentState.validate()) {
+        try {
+          await authProvider.signIn(
+            email: email,
+            password: pass,
+            userSignedIn: widget.signedInFunction,
+          );
+        } on FirebaseAuthException catch(e) {
+          if(e.message.contains("no user")) {
+            errorMessage = "No user found, please check email id and try again";
+          } else if(e.message.contains("password is invalid")) {
+            errorMessage = "Password is incorrect, please try again";
+          }
+          showErrorSnackBar(errorMessage);
+          
+        } on NetworkException catch(e) {
+          errorMessage = e.errorText;
+          showErrorSnackBar(errorMessage);
+        }
+        setState(() {
+          _isLoading = false;
+        });
       }
     }
 
@@ -178,9 +214,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             if(value.isEmpty) {
                               return "Please enter an email";
                             }
-                            if(!emailRegEx.hasMatch(value)) {
-                              return "Please enter a valid mail id";
-                            }
+                            // if(!emailRegEx.hasMatch(value)) {
+                            //   return "Please enter a valid mail id";
+                            // }
                             return null;
                           },
                           decoration: InputDecoration(
@@ -232,12 +268,12 @@ class _LoginScreenState extends State<LoginScreen> {
                             if(value.isEmpty) {
                               return "Please enter a password";
                             }
-                            if(!(value.length > 3)) {
-                              return "Password must be atleast 4 characters long";
-                            }
-                            if(!(value.length <= 15)) {
-                              return "Password must not exceed 15 characters";
-                            }
+                            // if(!(value.length > 3)) {
+                            //   return "Password must be atleast 4 characters long";
+                            // }
+                            // if(!(value.length <= 15)) {
+                            //   return "Password must not exceed 15 characters";
+                            // }
                             return null;
                           },
                           decoration: InputDecoration(

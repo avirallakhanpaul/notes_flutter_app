@@ -73,6 +73,9 @@ class _NoteScreenState extends State<NoteScreen> {
 
       if(titleController.text == initialTitleValue && descController.text == initialDescValue) {
         Navigator.pop(context);
+      } else if(titleController.text == "" && descController.text == "") {
+        Navigator.pop(context);
+        noteProvider.deleteNote(note.id);
       } else {
         await noteProvider.updateNote(
           idKey: note.id,
@@ -92,7 +95,6 @@ class _NoteScreenState extends State<NoteScreen> {
         );
 
         if(!isPopScope || isPopScope == null) {
-          print("No pop Scope");
           Navigator.pop(context);
         } else {
           return;

@@ -1,10 +1,11 @@
 import "package:flutter/material.dart";
-import 'package:notes_app/screens/authentication/signup_screen.dart';
-import 'package:notes_app/screens/email_verification/verification.dart';
+import 'package:notes_app/screens/settings/settings_screen.dart';
 
+import "../providers/auth_provider.dart";
 import 'authentication/login_screen.dart';
 import 'home_screen/home_screen.dart';
-import "../providers/auth_provider.dart";
+import 'authentication/signup_screen.dart';
+import 'email_verification/verification.dart';
 
 class RootPage extends StatefulWidget {
 
@@ -21,6 +22,7 @@ enum AuthStatus {
   loggedIn,
   verifying,
   verified,
+  settings,
 }
 
 class _RootPageState extends State<RootPage> {
@@ -32,7 +34,7 @@ class _RootPageState extends State<RootPage> {
       print("uId in Root: $uId");
       setState(() {
         uId == null
-        ? _authStatus = AuthStatus.notLoggedIn
+        ? _authStatus = AuthStatus.notSignedUp
         : _authStatus = AuthStatus.loggedIn;
       });
     });
@@ -54,7 +56,7 @@ class _RootPageState extends State<RootPage> {
 
   void logout() {
     setState(() {
-      _authStatus = AuthStatus.notLoggedIn;    
+      _authStatus = AuthStatus.notLoggedIn;
     });
   }
 
@@ -76,6 +78,12 @@ class _RootPageState extends State<RootPage> {
     });
   }
 
+  void switchToSettings() {
+    setState(() {
+      _authStatus = AuthStatus.settings;          
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -83,15 +91,32 @@ class _RootPageState extends State<RootPage> {
 
     switch(_authStatus) {
       case AuthStatus.notSignedUp:
-        return SignupScreen(userSignedUp: signedUp, toLoginpage: switchToLogin,);
+        return SignupScreen(
+          userSignedUp: signedUp, 
+          toLoginpage: switchToLogin,
+        );
       case AuthStatus.notLoggedIn:
-        return LoginScreen(signedInFunction: login, toSingupPage: switchToSignup,);
+        return LoginScreen(
+          signedInFunction: login, 
+          toSingupPage: switchToSignup,
+        );
       case AuthStatus.verifying:
-        return Verification(userVerified: verified,);
+        return Verification(
+          userVerified: verified, 
+          toSignUpPage: switchToSignup,
+        );
       case AuthStatus.verified:
         return LoginScreen(signedInFunction: login,);
       case AuthStatus.loggedIn:
-        return HomeScreen(signOutFunction: logout,);
+        return HomeScreen(
+          signOutFunction: logout,
+          settingsFunction: switchToSettings,
+        );
+      case AuthStatus.settings:
+      return SettingsScreen(
+        toHomeFunction: login,
+        signOutFunction: logout,
+      );
     }
 
     return Container();

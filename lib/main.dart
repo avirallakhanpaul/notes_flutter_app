@@ -1,6 +1,7 @@
 import "package:flutter/material.dart";
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:notes_app/screens/settings/settings_screen.dart';
 import "package:provider/provider.dart";
 
 import 'providers/note_provider.dart';
@@ -58,6 +59,7 @@ class MyApp extends StatelessWidget {
           LoginScreen.routeName: (ctx) => LoginScreen(),
           SignupScreen.routeName: (ctx) => SignupScreen(),
           Verification.routeName: (ctx) => Verification(),
+          SettingsScreen.routeName: (ctx) => SettingsScreen(),
         },
       ),
     );

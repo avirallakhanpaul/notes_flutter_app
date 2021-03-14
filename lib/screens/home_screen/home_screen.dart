@@ -1,7 +1,9 @@
 import 'package:firebase_database/firebase_database.dart';
 import "package:flutter/material.dart";
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
+import '../settings/settings_screen.dart';
 import "./widgets/note_card.dart";
 import '../../common_widgtes/signout_alert_dialog.dart';
 import '../../common_widgtes/delete_alert_dialog.dart';
@@ -9,12 +11,15 @@ import '../../models/note.dart';
 import '../../providers/note_provider.dart';
 import '../../providers/theme_provider.dart';
 
+enum PopupOptions { signout }
+
 class HomeScreen extends StatefulWidget {
 
   static const routeName = "/home";
 
   final Function signOutFunction;
-  HomeScreen({this.signOutFunction});
+  final Function settingsFunction;
+  HomeScreen({this.signOutFunction, this.settingsFunction});
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -32,10 +37,20 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-
-    // FirebaseDatabase firebaseInstance = FirebaseDatabase.instance;
     
     final noteProvider = Provider.of<NoteProvider>(context, listen: false);
+
+    // void popupMenuAction(optSelected) {
+
+    //   if(optSelected == PopupOptions.signout) {
+    //     showDialog(
+    //       context: context,
+    //       builder: (ctx) => SignoutAlertDialog(signOutFunction: widget.signOutFunction,),
+    //     );
+    //   } else {
+    //     return null;
+    //   }
+    // }
     
     return Consumer<ThemeProvider>(
       builder: (ctx, theme, _) {
@@ -74,35 +89,41 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             leading: IconButton(
               icon: Icon(
-                Icons.exit_to_app_outlined,
+                Icons.settings_outlined,
                 color: theme.isDarkTheme
                 ? Colors.white
                 : Colors.black,
                 size: 30,
               ),
-              onPressed: () {
-                return showDialog(
-                  context: context,
-                  builder: (ctx) => SignoutAlertDialog(signOutFunction: widget.signOutFunction,),
-                );
-              },
+              onPressed: widget.settingsFunction,
             ),
+            
+            // IconButton(
+            //   icon: Icon(
+            //     Icons.exit_to_app_outlined,
+            //     color: theme.isDarkTheme
+            //     ? Colors.white
+            //     : Colors.black,
+            //     size: 30,
+            //   ),
+            //   onPressed: () {
+            //     return showDialog(
+            //       context: context,
+            //       builder: (ctx) => SignoutAlertDialog(signOutFunction: widget.signOutFunction,),
+            //     );
+            //   },
+            // ),
             actions: [
               Transform.scale(
-                scale: 1.2,
-                child: Switch(
-                  value: theme.isDarkTheme,
-                  onChanged: ((_) => theme.toggleTheme()),
-                  inactiveTrackColor: Color(0xFF4D4D4D),
-                  inactiveThumbColor: Color(0xFF78909C),
-                  inactiveThumbImage: AssetImage(
-                    "assets/icons/lightmode.png",
-                  ),
-                  activeTrackColor: Color(0xFF4D4D4D),
-                  activeColor: Color(0xFF42A5F5),
-                  activeThumbImage: AssetImage(
-                    "assets/icons/darkmode.png",
-                  ),
+                scale: 0.8,
+                child: IconButton(
+                  icon: theme.isDarkTheme
+                  ? SvgPicture.asset(
+                    "assets/icons/moon_fill.svg",
+                    color: Colors.white,
+                  )
+                  : SvgPicture.asset("assets/icons/moon_outline.svg"),
+                  onPressed: () => theme.toggleTheme(),
                 ),
               ),
             ],

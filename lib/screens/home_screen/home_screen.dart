@@ -3,9 +3,7 @@ import "package:flutter/material.dart";
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
-import '../settings/settings_screen.dart';
 import "./widgets/note_card.dart";
-import '../../common_widgtes/signout_alert_dialog.dart';
 import '../../common_widgtes/delete_alert_dialog.dart';
 import '../../models/note.dart';
 import '../../providers/note_provider.dart';
@@ -97,22 +95,6 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               onPressed: widget.settingsFunction,
             ),
-            
-            // IconButton(
-            //   icon: Icon(
-            //     Icons.exit_to_app_outlined,
-            //     color: theme.isDarkTheme
-            //     ? Colors.white
-            //     : Colors.black,
-            //     size: 30,
-            //   ),
-            //   onPressed: () {
-            //     return showDialog(
-            //       context: context,
-            //       builder: (ctx) => SignoutAlertDialog(signOutFunction: widget.signOutFunction,),
-            //     );
-            //   },
-            // ),
             actions: [
               Transform.scale(
                 scale: 0.8,
@@ -168,9 +150,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         .equalTo(noteProvider.userId)
                         .onValue,
                         builder: (BuildContext ctx, AsyncSnapshot<Event> snapshot) {
-                          // debugPrint("Snapshot DATA: ${snapshot.data.snapshot.value}");
-                          // debugPrint("Snapshot.data.snapshot: ${snapshot.data.snapshot}");
-                          // debugPrint(snapshot.connectionState.toString());
                           if(snapshot.connectionState == ConnectionState.waiting) {
                             return Center(child: CircularProgressIndicator());
                           } else if(snapshot.connectionState == ConnectionState.active && snapshot.data.snapshot.value == null) {
@@ -212,8 +191,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                           direction: DismissDirection.endToStart,
                                           confirmDismiss: (direction) async {
 
-                                            debugPrint("NoteData MAP: ${noteData[index]}");
-
                                             final delAlertDialog = DeleteAlertDialog(
                                               note: Note.fromMap(noteData[index]),
                                               fromNoteScreen: false,
@@ -226,13 +203,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                           },
                                           onDismissed: (direction) {
 
-                                            Scaffold.of(ctx).removeCurrentSnackBar();
+                                            ScaffoldMessenger.of(ctx).removeCurrentSnackBar();
 
                                             final deletedNote = noteData[index];
 
                                             note.deleteNote(noteData[index]["id"]);
 
-                                            return Scaffold.of(ctx).showSnackBar(
+                                            return ScaffoldMessenger.of(ctx).showSnackBar(
                                               SnackBar(
                                                 content: Text(
                                                   "Note Deleted",
@@ -256,14 +233,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                           },
                                           child: NoteCard(
                                             Note.fromMap(noteData[index]),
-                                            // Note(
-                                            //   id: noteData[index]["id"].toString(),
-                                            //   userId: noteData[index]["userId"],
-                                            //   title: noteData[index]["title"],
-                                            //   desc: noteData[index]["desc"],
-                                            //   lightColor: noteData[index]["lightColor"],
-                                            //   darkColor: noteData[index]["darkColor"],
-                                            // ),
                                           ),
                                         ),
                                         SizedBox(

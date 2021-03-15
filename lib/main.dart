@@ -44,6 +44,7 @@ class MyApp extends StatelessWidget {
           }
         ),
         StreamProvider(
+          initialData: "",
           create: (context) => context.read<AuthProvider>().authStateChanges,
         ),
       ],
@@ -82,5 +83,6 @@ class Authentication extends StatelessWidget {
     // }
 
     return RootPage(auth: AuthProvider(firebaseAuth: FirebaseAuth.instance));
+
   }
 }

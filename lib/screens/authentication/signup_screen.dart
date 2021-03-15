@@ -57,7 +57,9 @@ class _SignupScreenState extends State<SignupScreen> {
           content: Text(
             error,
             style: TextStyle(
+              fontFamily: "Poppins",
               fontSize: 18,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ),
@@ -369,7 +371,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   Container(
                     width: double.infinity,
                     height: 45,
-                    child: RaisedButton(
+                    child: ElevatedButton(
                       onPressed: () {
                         setState(() {
                           _isLoading = true;
@@ -379,6 +381,15 @@ class _SignupScreenState extends State<SignupScreen> {
                           pass: passwordController.text,
                         );
                       },
+                      style: ElevatedButton.styleFrom(
+                        primary: themeProvider.isDarkTheme
+                        ? Color(0xFF64B5F6)
+                        : Color(0xFF2196F3),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        elevation: 0,
+                      ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
@@ -409,13 +420,6 @@ class _SignupScreenState extends State<SignupScreen> {
                           : Container(),
                         ],
                       ),
-                      color: themeProvider.isDarkTheme
-                      ? Color(0xFF64B5F6)
-                      : Color(0xFF2196F3),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      elevation: 0,
                     ),
                   ),
                   SizedBox(
@@ -438,8 +442,22 @@ class _SignupScreenState extends State<SignupScreen> {
                       Container(
                         width: double.infinity,
                         height: 45,
-                        child: FlatButton(
+                        child: OutlinedButton(
                           onPressed: () => widget.toLoginpage(),
+                          style: OutlinedButton.styleFrom(
+                            primary: themeProvider.isDarkTheme
+                            ? Colors.grey
+                            : Colors.grey.shade50,
+                            side: BorderSide(
+                              color: themeProvider.isDarkTheme
+                              ? Color(0xFF64B5F6)
+                              : Color(0xFF2196F3),
+                              width: 3,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
                           child: Text(
                             "Login",
                             style: TextStyle(
@@ -450,18 +468,6 @@ class _SignupScreenState extends State<SignupScreen> {
                               fontWeight: FontWeight.w700,
                             ),
                           ),
-                          shape: RoundedRectangleBorder(
-                            side: BorderSide(
-                              color: themeProvider.isDarkTheme
-                              ? Color(0xFF64B5F6)
-                              : Color(0xFF2196F3),
-                              width: 3,
-                            ),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          splashColor: themeProvider.isDarkTheme
-                          ? Colors.grey.shade800
-                          : Colors.grey.shade50,
                         ),
                       ),
                     ],

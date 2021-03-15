@@ -52,7 +52,9 @@ class _LoginScreenState extends State<LoginScreen> {
           content: Text(
             error,
             style: TextStyle(
+              fontFamily: "Poppins",
               fontSize: 18,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ),
@@ -314,7 +316,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   Container(
                     width: double.infinity,
                     height: 45,
-                    child: RaisedButton(
+                    child: ElevatedButton(
                       onPressed: () {
                         setState(() {
                           _isLoading = true;
@@ -324,6 +326,15 @@ class _LoginScreenState extends State<LoginScreen> {
                           pass: passwordController.text,
                         );
                       },
+                      style: ElevatedButton.styleFrom(
+                        primary: themeProvider.isDarkTheme
+                        ? Color(0xFF64B5F6)
+                        : Color(0xFF2196F3),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        elevation: 0,
+                      ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
@@ -354,13 +365,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           : Container(),
                         ],
                       ),
-                      color: themeProvider.isDarkTheme
-                      ? Color(0xFF64B5F6)
-                      : Color(0xFF2196F3),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      elevation: 0,
                     ),
                   ),
                   SizedBox(
@@ -383,8 +387,22 @@ class _LoginScreenState extends State<LoginScreen> {
                       Container(
                         width: double.infinity,
                         height: 45,
-                        child: FlatButton(
+                        child: OutlinedButton(
                           onPressed: () => widget.toSingupPage(),
+                          style: OutlinedButton.styleFrom(
+                            primary: themeProvider.isDarkTheme
+                            ? Colors.grey
+                            : Colors.grey.shade50,
+                            side: BorderSide(
+                              color: themeProvider.isDarkTheme
+                              ? Color(0xFF64B5F6)
+                              : Color(0xFF2196F3),
+                              width: 3,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
                           child: Text(
                             "Signup",
                             style: TextStyle(
@@ -395,18 +413,6 @@ class _LoginScreenState extends State<LoginScreen> {
                               fontWeight: FontWeight.w700,
                             ),
                           ),
-                          shape: RoundedRectangleBorder(
-                            side: BorderSide(
-                              color: themeProvider.isDarkTheme
-                              ? Color(0xFF64B5F6)
-                              : Color(0xFF2196F3),
-                              width: 3,
-                            ),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          splashColor: themeProvider.isDarkTheme
-                          ? Colors.grey.shade800
-                          : Colors.grey.shade50,
                         ),
                       ),
                     ],

@@ -38,7 +38,7 @@ class DeleteAlertDialog extends StatelessWidget {
           ? Color(0xFF424242)
           : Colors.white,
           title: Text(
-            "Delete?",
+            "Are you sure?",
             style: TextStyle(
               fontFamily: "Poppins",
               fontSize: 20,
@@ -58,23 +58,11 @@ class DeleteAlertDialog extends StatelessWidget {
             ),
           ),
           actions: [
-            RaisedButton(
-              onPressed: () async => delNote(),
-              color: theme.isDarkTheme
-              ? Color(0xFFf44336)
-              : Colors.red.shade700,
-              child: Text(
-                "Delete",
-                style: TextStyle(
-                  fontFamily: "Poppins",
-                  fontSize: 14,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-            FlatButton(
+            TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-              splashColor: Colors.grey.shade300,
+              style: TextButton.styleFrom(
+                primary: Colors.grey.shade300,
+              ),
               child: Text(
                 "Cancel",
                 style: TextStyle(
@@ -83,6 +71,22 @@ class DeleteAlertDialog extends StatelessWidget {
                   color: theme.isDarkTheme
                   ? Colors.white
                   : Colors.black,
+                ),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () async => delNote(),
+              style: ElevatedButton.styleFrom(
+                primary: theme.isDarkTheme
+                ? Color(0xFFf44336)
+                : Colors.red.shade700,
+              ),
+              child: Text(
+                "Delete",
+                style: TextStyle(
+                  fontFamily: "Poppins",
+                  fontSize: 14,
+                  color: Colors.white,
                 ),
               ),
             ),

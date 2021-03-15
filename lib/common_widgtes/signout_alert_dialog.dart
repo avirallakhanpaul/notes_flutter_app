@@ -27,7 +27,7 @@ class SignoutAlertDialog extends StatelessWidget {
           ? Color(0xFF424242)
           : Colors.white,
           title: Text(
-            "Sign Out?",
+            "Are you sure?",
             style: TextStyle(
               fontFamily: "Poppins",
               fontSize: 20,
@@ -36,34 +36,12 @@ class SignoutAlertDialog extends StatelessWidget {
               : Colors.black,
             ),
           ),
-          content: Text(
-            "Are you sure you want to sign out?",
-            style: TextStyle(
-              fontFamily: "Poppins",
-              fontSize: 16,
-              color: theme.isDarkTheme
-              ? Colors.white 
-              : Colors.black,
-            ),
-          ),
           actions: [
-            RaisedButton(
-              onPressed: () async => signout(),
-              color: theme.isDarkTheme
-              ? Color(0xFFf44336)
-              : Colors.red.shade700,
-              child: Text(
-                "Sign Out",
-                style: TextStyle(
-                  fontFamily: "Poppins",
-                  fontSize: 14,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-            FlatButton(
+            TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-              splashColor: Colors.grey.shade300,
+              style: TextButton.styleFrom(
+                primary: Colors.grey.shade300,
+              ),
               child: Text(
                 "Cancel",
                 style: TextStyle(
@@ -72,6 +50,22 @@ class SignoutAlertDialog extends StatelessWidget {
                   color: theme.isDarkTheme
                   ? Colors.white
                   : Colors.black,
+                ),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () async => signout(),
+              style: ElevatedButton.styleFrom(
+                primary: theme.isDarkTheme
+                ? Color(0xFFf44336)
+                : Colors.red.shade700,
+              ),
+              child: Text(
+                "Sign Out",
+                style: TextStyle(
+                  fontFamily: "Poppins",
+                  fontSize: 14,
+                  color: Colors.white,
                 ),
               ),
             ),

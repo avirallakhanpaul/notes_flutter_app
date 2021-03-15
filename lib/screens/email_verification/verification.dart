@@ -183,18 +183,20 @@ class _VerificationState extends State<Verification> {
               ),
               Container(
                 width: double.infinity,
-                child: FlatButton(
-                  padding: EdgeInsets.symmetric(
-                    vertical: 10,
-                  ),
+                child: OutlinedButton(
                   onPressed: () => widget.toSignUpPage(),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+                  style: OutlinedButton.styleFrom(
+                    padding: EdgeInsets.symmetric(
+                      vertical: 10,
+                    ),
                     side: BorderSide(
                       color: Color(0xFF2196F3),
                       width: 3,
                     ),
-                  ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ), 
                   child: Text(
                     "Back",
                     style: TextStyle(

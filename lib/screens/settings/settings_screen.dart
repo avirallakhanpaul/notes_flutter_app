@@ -27,6 +27,9 @@ class SettingsScreen extends StatelessWidget {
         builder: (ctx, theme, child) {
           return Scaffold(
             appBar: AppBar(
+              brightness: theme.isDarkTheme
+              ? Brightness.dark
+              : Brightness.light,
               title: Text(
                 "Settings",
                 style: TextStyle(

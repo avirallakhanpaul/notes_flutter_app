@@ -43,7 +43,6 @@ class _SignupScreenState extends State<SignupScreen> {
     String currentPass;
 
     bool checkValidation() {
-
       final isValid = _formKey.currentState.validate();
       return isValid;
     }
@@ -96,6 +95,9 @@ class _SignupScreenState extends State<SignupScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        brightness: themeProvider.isDarkTheme
+        ? Brightness.dark
+        : Brightness.light,
         backgroundColor: themeProvider.isDarkTheme
         ? Color(0xFF121212)
         : Colors.white,
@@ -209,9 +211,7 @@ class _SignupScreenState extends State<SignupScreen> {
                             ? Colors.grey.shade300
                             : Colors.grey.shade800,
                           ),
-                          onChanged: (_) {
-                            checkValidation();
-                          },
+                          // onChanged: (_) => checkValidation(),
                           validator: (value) {
                             if(value.isEmpty) {
                               return "Please enter an email";

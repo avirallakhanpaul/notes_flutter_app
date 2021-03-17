@@ -11,8 +11,13 @@ class LoginScreen extends StatefulWidget {
 
   final Function signedInFunction;
   final Function toSingupPage;
+  final Function toForgotPassPage;
 
-  LoginScreen({this.signedInFunction, this.toSingupPage});
+  LoginScreen({
+    this.signedInFunction, 
+    this.toSingupPage,
+    this.toForgotPassPage
+  });
 
   static const routeName = "/login";
 
@@ -38,7 +43,6 @@ class _LoginScreenState extends State<LoginScreen> {
     final themeProvider = Provider.of<ThemeProvider>(context);
 
     bool checkValidation() {
-
       final isValid = _formKey.currentState.validate();
       return isValid;
     }
@@ -80,6 +84,8 @@ class _LoginScreenState extends State<LoginScreen> {
             errorMessage = "No user found, please check email id and try again";
           } else if(e.message.contains("password is invalid")) {
             errorMessage = "Password is incorrect, please try again";
+          } else if(e.message.contains("badly formatted")) {
+            errorMessage = "Email id is not valid, please check and try again";
           }
           showErrorSnackBar(errorMessage);
           
@@ -95,6 +101,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        brightness: themeProvider.isDarkTheme
+        ? Brightness.dark
+        : Brightness.light,
         backgroundColor: themeProvider.isDarkTheme
         ? Color(0xFF121212)
         : Colors.white,
@@ -209,9 +218,12 @@ class _LoginScreenState extends State<LoginScreen> {
                             ? Colors.grey.shade300
                             : Colors.grey.shade800,
                           ),
-                          onChanged: (_) {
-                            checkValidation();
-                          },
+                          // onSaved: (_) => checkValidation(),
+                          // onFieldSubmitted: (_) => checkValidation(),
+                          // onEditingComplete: () => checkValidation(),
+                          // onChanged: (_) {
+                          //   checkValidation();
+                          // },
                           validator: (value) {
                             if(value.isEmpty) {
                               return "Please enter an email";
@@ -263,9 +275,10 @@ class _LoginScreenState extends State<LoginScreen> {
                             ? Colors.grey.shade300
                             : Colors.grey.shade800,
                           ),
-                          onChanged: (_) {
-                            checkValidation();
-                          },
+                          // onSaved: (_) => checkValidation(),
+                          // onFieldSubmitted: (_) => checkValidation(),
+                          // onEditingComplete: () => checkValidation(),
+                          onChanged: (_) => checkValidation(),
                           validator: (value) {
                             if(value.isEmpty) {
                               return "Please enter a password";
@@ -364,6 +377,21 @@ class _LoginScreenState extends State<LoginScreen> {
                           )
                           : Container(),
                         ],
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  TextButton(
+                    onPressed: () => widget.toForgotPassPage(),
+                    child: Text(
+                      "Forgot Password?",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        letterSpacing: 0.48,
+                        color: Colors.grey.shade500,
                       ),
                     ),
                   ),

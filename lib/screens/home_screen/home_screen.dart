@@ -54,6 +54,9 @@ class _HomeScreenState extends State<HomeScreen> {
       builder: (ctx, theme, _) {
         return Scaffold(
           appBar: AppBar(
+            brightness: theme.isDarkTheme
+            ? Brightness.dark
+            : Brightness.light,
             backgroundColor: theme.isDarkTheme
             ? Color(0xFF121212)
             : Colors.white,
@@ -124,7 +127,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-          backgroundColor: theme.isDarkTheme == true
+          backgroundColor: theme.isDarkTheme
             ? Color(0xFF121212) 
             : Colors.white,
           body: Builder(
@@ -152,6 +155,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         builder: (BuildContext ctx, AsyncSnapshot<Event> snapshot) {
                           if(snapshot.connectionState == ConnectionState.waiting) {
                             return Center(child: CircularProgressIndicator());
+                          } else if(snapshot.connectionState == ConnectionState.none) {
+                            return Text("No Internet Connection");
                           } else if(snapshot.connectionState == ConnectionState.active && snapshot.data.snapshot.value == null) {
                             debugPrint("No Data");
                             return Container();

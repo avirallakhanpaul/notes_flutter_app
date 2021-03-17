@@ -61,6 +61,9 @@ class _VerificationState extends State<Verification> {
 
     return Scaffold(
       appBar: AppBar(
+        brightness: themeProvider.isDarkTheme
+        ? Brightness.dark
+        : Brightness.light,
         backgroundColor: themeProvider.isDarkTheme
         ? Color(0xFF121212)
         : Colors.white,

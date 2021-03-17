@@ -146,4 +146,20 @@ class AuthProvider with ChangeNotifier implements AuthBaseClass {
     userSignedOut();
     notifyListeners();
   }
+
+  Future<void> forgotPassword({String email}) async {
+    try {
+      var connectionResult = await (Connectivity().checkConnectivity());
+      if(connectionResult == ConnectivityResult.none) {
+        print("NetworkException Found");
+        throw NetworkException(errorText: "Couldn't connect to the server, please try again later");
+      } else if(!emailRegEx.hasMatch(email)) {
+        throw AuthException(errorText: "Email id is not valid, please check and try again");
+      } else {
+        await firebaseAuth.sendPasswordResetEmail(email: email);
+      }
+    } on FirebaseAuthException catch(e) {
+      print("FirebaseAuth Exception:- $e");
+    }
+  }
 }

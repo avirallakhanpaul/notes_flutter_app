@@ -111,6 +111,9 @@ class _NoteScreenState extends State<NoteScreen> {
         builder: (ctx, theme, child) {
           return Scaffold(
             appBar: AppBar(
+              brightness: theme.isDarkTheme
+              ? Brightness.dark
+              : Brightness.light,
               backgroundColor: theme.isDarkTheme
               ? Color(note.darkColor)
               : Color(note.lightColor),

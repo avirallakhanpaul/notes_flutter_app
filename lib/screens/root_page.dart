@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import 'package:notes_app/screens/authentication/forgot_password_screen.dart';
 import 'package:notes_app/screens/settings/settings_screen.dart';
 
 import "../providers/auth_provider.dart";
@@ -22,6 +23,7 @@ enum AuthStatus {
   loggedIn,
   verifying,
   verified,
+  forgotPass,
   settings,
 }
 
@@ -78,6 +80,12 @@ class _RootPageState extends State<RootPage> {
     });
   }
 
+  void switchToForgotPass() {
+    setState(() {
+      _authStatus = AuthStatus.forgotPass;    
+    });
+  }
+
   void switchToSettings() {
     setState(() {
       _authStatus = AuthStatus.settings;          
@@ -99,6 +107,7 @@ class _RootPageState extends State<RootPage> {
         return LoginScreen(
           signedInFunction: login, 
           toSingupPage: switchToSignup,
+          toForgotPassPage: switchToForgotPass,
         );
       case AuthStatus.verifying:
         return Verification(
@@ -106,11 +115,19 @@ class _RootPageState extends State<RootPage> {
           toSignUpPage: switchToSignup,
         );
       case AuthStatus.verified:
-        return LoginScreen(signedInFunction: login,);
+        return LoginScreen(
+          signedInFunction: login,
+          toSingupPage: switchToSignup,
+          toForgotPassPage: switchToForgotPass,
+        );
       case AuthStatus.loggedIn:
         return HomeScreen(
           signOutFunction: logout,
           settingsFunction: switchToSettings,
+        );
+      case AuthStatus.forgotPass:
+        return ForgotPasswordScreen(
+          toLoginPage: switchToLogin,
         );
       case AuthStatus.settings:
       return SettingsScreen(

@@ -337,7 +337,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                             child: Text(
                               "Back",
                               style: TextStyle(
-                                color: Colors.white,
+                                color: themeProvider.isDarkTheme
+                                ? Colors.white
+                                : Colors.black,
                                 fontSize: 20,
                                 fontWeight: FontWeight.w700,
                               ),

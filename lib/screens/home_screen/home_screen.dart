@@ -23,32 +23,79 @@ class HomeScreen extends StatefulWidget {
   _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   FirebaseDatabase firebaseInstance;
+  
+  AnimationController _animationController;
+  AnimationController _sizeAnimController;
+  Animation _sizeAnimation;
+  CurvedAnimation _sizeCurvedAnimation;
+
+  Tween<Offset> tweenOffset = Tween<Offset>(
+    begin: Offset(1,0),
+    end: Offset(0,0),
+  );
 
   @override
   void initState() {
-    firebaseInstance = FirebaseDatabase.instance;
     super.initState();
+
+    firebaseInstance = FirebaseDatabase.instance;
+    
+    _animationController = AnimationController(
+      duration: Duration(milliseconds: 400),
+      vsync: this,
+    );
+    _sizeAnimController = AnimationController(
+      duration: Duration(milliseconds: 300),
+      vsync: this,
+    );
+
+    _sizeCurvedAnimation = CurvedAnimation(
+      parent: _sizeAnimController,
+      curve: Curves.easeInOut,
+    );
+
+    _sizeAnimation = TweenSequence(
+      <TweenSequenceItem<double>>[
+        TweenSequenceItem<double>(
+          tween: Tween<double>(
+            begin: 0.8,
+            end: 1.2,
+          ), 
+          weight: 50,
+        ),
+        TweenSequenceItem<double>(
+          tween: Tween<double>(
+            begin: 1.2,
+            end: 0.8,
+          ), 
+          weight: 50,
+        ),
+      ],
+    ).animate(_sizeCurvedAnimation);
+
+    _animationController.forward();
+
+    _animationController.addListener(() {
+      print(_animationController.value);
+      // setState(() {});
+    });
+
+    _animationController.addStatusListener((status) {
+      print(_animationController.status);
+    });
+
+    _sizeAnimController.addStatusListener((status) {
+      print("Size Animation Status: $status");
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     
     final noteProvider = Provider.of<NoteProvider>(context, listen: false);
-
-    // void popupMenuAction(optSelected) {
-
-    //   if(optSelected == PopupOptions.signout) {
-    //     showDialog(
-    //       context: context,
-    //       builder: (ctx) => SignoutAlertDialog(signOutFunction: widget.signOutFunction,),
-    //     );
-    //   } else {
-    //     return null;
-    //   }
-    // }
     
     return Consumer<ThemeProvider>(
       builder: (ctx, theme, _) {
@@ -60,33 +107,51 @@ class _HomeScreenState extends State<HomeScreen> {
             backgroundColor: theme.isDarkTheme
             ? Color(0xFF121212)
             : Colors.white,
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text("Just",
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontFamily: "Poppins",
-                    color: theme.isDarkTheme
-                    ? Colors.white
-                    : Colors.black,
+            title:TweenAnimationBuilder(
+              duration: Duration(milliseconds: 1200),
+              tween: Tween<double>(
+                begin: 0,
+                end: 1,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text("Just",
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontFamily: "Poppins",
+                      color: theme.isDarkTheme
+                      ? Colors.white
+                      : Colors.black,
+                    ),
                   ),
-                ),
-                SizedBox(
-                  width: 2,
-                ),
-                Text(
-                  "Notes",
-                  style: TextStyle(
-                    fontFamily: "Poppins",
-                    fontWeight: FontWeight.w700,
-                    fontSize: 24,
-                    color: theme.isDarkTheme
-                    ? Color(0xFF42A5F5)
-                    : Colors.blue.shade700,
+                  SizedBox(
+                    width: 2,
                   ),
-                ),
-              ],
+                  Text(
+                    "Notes",
+                    style: TextStyle(
+                      fontFamily: "Poppins",
+                      fontWeight: FontWeight.w700,
+                      fontSize: 24,
+                      color: theme.isDarkTheme
+                      ? Color(0xFF42A5F5)
+                      : Colors.blue.shade700,
+                    ),
+                  ),
+                ],
+              ),
+              builder: (ctx, val, child) {
+                return Opacity(
+                  opacity: val,
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      bottom: 20 - (val * 20),
+                    ),
+                    child: child,
+                  ),
+                );
+              }
             ),
             leading: IconButton(
               icon: Icon(
@@ -96,20 +161,45 @@ class _HomeScreenState extends State<HomeScreen> {
                 : Colors.black,
                 size: 30,
               ),
+              splashRadius: 25,
+              tooltip: "Settings",
+              enableFeedback: true,
               onPressed: widget.settingsFunction,
             ),
             actions: [
-              Transform.scale(
-                scale: 0.8,
-                child: IconButton(
-                  icon: theme.isDarkTheme
-                  ? SvgPicture.asset(
-                    "assets/icons/moon_fill.svg",
-                    color: Colors.white,
-                  )
-                  : SvgPicture.asset("assets/icons/moon_outline.svg"),
-                  onPressed: () => theme.toggleTheme(),
-                ),
+              AnimatedBuilder(
+                animation: _animationController,
+                builder: (ctx, child) {
+                  return Transform.scale(
+                    scale: _sizeAnimation.value,
+                    child: IconButton(
+                      icon: theme.isDarkTheme
+                      ? Opacity(
+                        opacity: _animationController.value,
+                        child: SvgPicture.asset(
+                          "assets/icons/moon_fill.svg",
+                          color: Colors.white,
+                        ),
+                      )
+                      : SvgPicture.asset("assets/icons/moon_outline.svg"),
+                      splashRadius: 25,
+                      enableFeedback: true,
+                      tooltip: theme.isDarkTheme
+                      ? "Enable Light Mode"
+                      : "Enable Dark Mode",
+                      onPressed: () => {
+                        if(theme.isDarkTheme) {
+                          _animationController.reverse(),
+                          _sizeAnimController.forward(),
+                        } else {
+                          _animationController.forward(),
+                          _sizeAnimController.reverse(),
+                        },
+                        theme.toggleTheme(),
+                      }
+                    ),
+                  );
+                },
               ),
             ],
             centerTitle: true,
@@ -117,6 +207,8 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           floatingActionButton: FloatingActionButton(
             onPressed: () => noteProvider.addNote(context: context),
+            elevation: 5,
+            tooltip: "Add a note",
             backgroundColor: theme.isDarkTheme
             ? Color(0xFF64B5F6)
             : Color(0xFF2196F3),

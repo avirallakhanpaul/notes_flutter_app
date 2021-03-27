@@ -24,16 +24,16 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.2
+  connectivity: ^3.0.2
   firebase_auth: ^1.0.1
   firebase_core: ^1.0.1
   firebase_database: ^6.1.0
   flutter_svg: ^0.19.3
-  fluttertoast: ^7.1.8
   flutter_switch: ^0.2.2
+  fluttertoast: ^7.1.8
   provider: ^5.0.0
   shared_preferences: ^2.0.4
-  connectivity: ^3.0.2
-  # sqflite: ^2.0.0+2
+  share: ^2.0.1
 
 dev_dependencies:
   flutter_test:

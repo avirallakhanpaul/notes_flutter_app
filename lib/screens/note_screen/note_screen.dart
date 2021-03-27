@@ -4,11 +4,15 @@ import 'package:notes_app/models/note.dart';
 import 'package:notes_app/providers/theme_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:share/share.dart';
 
 import "../../providers/note_provider.dart";
 import "../../common_widgtes/delete_alert_dialog.dart";
 
-enum PopupOptions { delete }
+enum PopupOptions {
+  delete,
+  share,
+}
 
 class NoteScreen extends StatefulWidget {
 
@@ -46,6 +50,17 @@ class _NoteScreenState extends State<NoteScreen> {
     final initialTitleValue = titleController.text;
     final initialDescValue = descController.text;
 
+    void shareNote({@required String title, @required String desc}) {
+      if(title.isEmpty && desc.isEmpty) {
+        return;
+      } else {
+        Share.share(
+          "$title \n\n$desc \n\nThis note is made using JustNotes app, developed by Aviral Lakhanpaul",
+          subject: "$title",
+        );
+      }
+    }
+
     void popupMenuAction(optSelected) async {
 
       if(optSelected == PopupOptions.delete) {
@@ -64,6 +79,13 @@ class _NoteScreenState extends State<NoteScreen> {
         );
 
         // print("After Deletion");
+      } else if(optSelected == PopupOptions.share) {
+        print("Share Option Selected");
+
+        shareNote(
+          title: titleController.text,
+          desc: descController.text,
+        );
       } else {
         return null;
       }
@@ -123,10 +145,13 @@ class _NoteScreenState extends State<NoteScreen> {
                   size: 20,
                   color: Colors.white
                 ),
+                splashRadius: 25,
+                tooltip: "Back",
+                enableFeedback: true,
                 onPressed: () => saveNote(isPopScope: false),
               ),
               title: Consumer<NoteProvider>(
-                builder: (ctx, note, child) {
+                builder: (ctx, _, child) {
                   return TextField(
                     style: TextStyle(
                       color: Colors.white,
@@ -150,14 +175,15 @@ class _NoteScreenState extends State<NoteScreen> {
               ),
               elevation: 0,
               actions: [
-                // isSaving 
-                // ? CircularProgressIndicator()
                 IconButton(
                   icon: Icon(
                     Icons.done,
                     color: Colors.white,
                   ),
                   onPressed: () => saveNote(isPopScope: false),
+                  enableFeedback: true,
+                  tooltip: "Save",
+                  splashRadius: 25,
                 ),
                 PopupMenuButton<PopupOptions>(
                   icon: Icon(
@@ -181,6 +207,25 @@ class _NoteScreenState extends State<NoteScreen> {
                           ),
                           title: Text(
                             "Delete",
+                            style: TextStyle(
+                              color: theme.isDarkTheme
+                              ? Colors.white
+                              : Colors.black,
+                            ),
+                          ),
+                        ),
+                      ),
+                      PopupMenuItem<PopupOptions>(
+                        value: PopupOptions.share,
+                        child: ListTile(
+                          leading: Icon(
+                            Icons.share,
+                            color: theme.isDarkTheme
+                            ? Colors.white
+                            : Colors.black,
+                          ),
+                          title: Text(
+                            "Share",
                             style: TextStyle(
                               color: theme.isDarkTheme
                               ? Colors.white

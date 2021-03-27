@@ -1,7 +1,9 @@
 import "package:flutter/material.dart";
+import 'package:notes_app/helpers/arguments.dart';
 import 'package:notes_app/helpers/note_screen_agruments.dart';
 import 'package:notes_app/models/note.dart';
 import 'package:notes_app/providers/theme_provider.dart';
+import 'package:notes_app/screens/reminder/reminder_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:share/share.dart';
@@ -12,6 +14,7 @@ import "../../common_widgtes/delete_alert_dialog.dart";
 enum PopupOptions {
   delete,
   share,
+  reminder,
 }
 
 class NoteScreen extends StatefulWidget {
@@ -61,6 +64,18 @@ class _NoteScreenState extends State<NoteScreen> {
       }
     }
 
+    void addReminder() {
+      Navigator.of(context).pushNamed(
+        ReminderScreen.routeName,
+        arguments: Args(
+          title: titleController.text,
+          desc: descController.text,
+          darkColor: note.darkColor,
+          lightColor: note.lightColor,
+        )
+      );
+    }
+
     void popupMenuAction(optSelected) async {
 
       if(optSelected == PopupOptions.delete) {
@@ -86,6 +101,10 @@ class _NoteScreenState extends State<NoteScreen> {
           title: titleController.text,
           desc: descController.text,
         );
+      } else if(optSelected == PopupOptions.reminder) {
+        print("reminder Option Selected");
+
+        addReminder();
       } else {
         return null;
       }
@@ -226,6 +245,25 @@ class _NoteScreenState extends State<NoteScreen> {
                           ),
                           title: Text(
                             "Share",
+                            style: TextStyle(
+                              color: theme.isDarkTheme
+                              ? Colors.white
+                              : Colors.black,
+                            ),
+                          ),
+                        ),
+                      ),
+                      PopupMenuItem<PopupOptions>(
+                        value: PopupOptions.reminder,
+                        child: ListTile(
+                          leading: Icon(
+                            Icons.notifications,
+                            color: theme.isDarkTheme
+                            ? Colors.white
+                            : Colors.black,
+                          ),
+                          title: Text(
+                            "Reminder",
                             style: TextStyle(
                               color: theme.isDarkTheme
                               ? Colors.white

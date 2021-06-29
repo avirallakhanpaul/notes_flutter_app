@@ -2,10 +2,12 @@ import "package:flutter/material.dart";
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:notes_app/providers/notification_provider.dart';
 import 'package:notes_app/providers/reminder_provider.dart';
 import 'package:notes_app/screens/reminder/reminder_screen.dart';
 import "package:provider/provider.dart";
 import 'package:timezone/data/latest.dart' as tz;
+import 'package:awesome_notifications/awesome_notifications.dart';
 
 import 'providers/note_provider.dart';
 import 'providers/theme_provider.dart';
@@ -26,15 +28,26 @@ Future<void> main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
 
-  var initializationSettingsAndroid = AndroidInitializationSettings("@mipmap/justnotes_icon");
-  var initializationSettings = InitializationSettings(android: initializationSettingsAndroid);
-  await flutterLocalNotificationsPlugin.initialize(
-    initializationSettings,
-    onSelectNotification: (String payload) async {
-      if(payload != null) {
-        debugPrint("Payload:- $payload");
-      }
-    }
+  // var initializationSettingsAndroid = AndroidInitializationSettings("@mipmap/justnotes_icon");
+  // var initializationSettings = InitializationSettings(android: initializationSettingsAndroid);
+  // await flutterLocalNotificationsPlugin.initialize(
+  //   initializationSettings,
+  //   onSelectNotification: (String payload) async {
+  //     if(payload != null) {
+  //       debugPrint("Payload:- $payload");
+  //     }
+  //   }
+  // );
+
+  AwesomeNotifications().initialize(
+    null,
+    [
+      NotificationChannel(
+        channelKey: "JustNotes_Channel_1",
+        channelName: "JustNotes_Channel",
+        channelDescription: "JustNotes_Notifications",
+      ),
+    ],
   );
 
   await Firebase.initializeApp();
@@ -52,6 +65,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<ThemeProvider>(create: (context) => ThemeProvider(),),
         ChangeNotifierProvider<AuthProvider>(create: (context) => AuthProvider(firebaseAuth: FirebaseAuth.instance),),
         ChangeNotifierProvider<ReminderProvider>(create: (context) => ReminderProvider(),),
+        ChangeNotifierProvider<NotificationProvider>(
+          create: (context) => NotificationProvider(),
+        ),
         ChangeNotifierProxyProvider<ThemeProvider, NoteProvider>(
           create: (context) => NoteProvider(),
           update: (ctx, theme, note) {

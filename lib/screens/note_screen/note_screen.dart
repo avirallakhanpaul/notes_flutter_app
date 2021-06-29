@@ -68,6 +68,7 @@ class _NoteScreenState extends State<NoteScreen> {
       Navigator.of(context).pushNamed(
         ReminderScreen.routeName,
         arguments: Args(
+          index: note.id,
           title: titleController.text,
           desc: descController.text,
           darkColor: note.darkColor,

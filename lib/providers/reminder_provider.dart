@@ -1,53 +1,104 @@
 import "package:flutter/material.dart";
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:intl/intl.dart';
+
+import '../helpers/db_helper.dart';
+import '../models/reminder.dart';
 
 class ReminderProvider with ChangeNotifier {
-
   ReminderProvider() {
-    _loadFromPrefs();
+    loadFromDb();
   }
 
-  SharedPreferences _prefs;
-  String key = "reminder";
+  String tableName = "reminder_table";
 
   bool _isReminderSet;
   bool get isReminderSet => _isReminderSet;
 
-  DateTime _date;
-  DateTime get date => _date;
-  DateTime _time;
-  DateTime get time => _time;
+  DateTime _dateTime;
+  DateTime get dateTime => _dateTime;
 
-  Future<void> _initPrefs() async {
-    if(_prefs == null) {
-      _prefs = await SharedPreferences.getInstance();
+  // final dateFormat = DateFormat("EEEE, d'th' MMMM y").add_jm();
+  final dateFormat = DateFormat("yyyy-MM-dd kk:mm:ss");
+  // DateTime _time;
+  // DateTime get time => _time;
+
+  // Future<void> _initPath() async {
+  //   if (file == null) {
+  //     try {
+  //       final directory = await getApplicationDocumentsDirectory();
+  //       file = File('${directory.path}/reminders.txt');
+  //     } catch (error) {
+  //       print("File Exception:- $error");
+  //     }
+  //   } else {
+  //     return;
+  //   }
+  // }
+
+  // Future<dynamic> loadFromFile() async {
+  //   await _initPath();
+  //   try {
+  //     String dateTimeString = await file.readAsString();
+  //     if (dateTimeString != null || dateTimeString != "") {
+  //       print("Reminder in File $dateTimeString");
+  //       _dateTime = dateFormat.parse(dateTimeString);
+  //       print("Parsed Reminder in Provider:- $dateTimeString");
+  //       return _dateTime;
+  //     } else {
+  //       print("File is empty");
+  //       return null;
+  //     }
+  //   } catch (error) {
+  //     print("Load File Exception:- $error");
+  //   }
+  // }
+
+  Future<dynamic> loadFromDb() async {
+    final reminderData = await DBHelper.getData(tableName);
+
+    if (reminderData.isNotEmpty) {
+      for (int i = 0; i < reminderData.length; i++) {
+        print("Reminder DB Data: ${reminderData[i]["reminderTitle"]}");
+      }
     } else {
       return;
     }
   }
 
-  void _loadFromPrefs() async {
-    await _initPrefs();
-    _isReminderSet = _prefs.getBool(key) ?? false;
-    print("Is there any reminder:- $_isReminderSet");
+  void saveReminder(Reminder reminder, selectedDateTime) async {
+    _dateTime = selectedDateTime;
+    await DBHelper.insertToDb(
+      tableName,
+      {
+        "id": reminder.id,
+        "title": reminder.title,
+        "dateTimeString": dateTime.toString(),
+      },
+    );
+    print("Reminder ${reminder.id} saved to DB");
     notifyListeners();
   }
 
-  void setReminder({@required DateTime selectedDate, @required DateTime selectedTime}) async {
-    await _initPrefs();
-    _prefs.setBool(key, true);
-    _loadFromPrefs();
-    _date = selectedDate;
-    _time = selectedTime;
-    print("key set to TRUE");
-    notifyListeners();
+  // Future<void> _saveToFile() async {
+  //   await _initPath();
+  //   // final dateTime = DateTime(
+  //   // final dateTimeText = _dateTime.toString();
+  //   await file.writeAsString(dateFormat.format(_dateTime).toString());
+  //   print('saved');
+  // }
+
+  Future<Reminder> getReminderById(String id) async {
+    final mapData = await DBHelper.getData(tableName, arg: id);
+    print("Reminder ${mapData[0]["id"]} data from DB: ${mapData[0]}");
+    return Reminder().toReminder(
+      mapData[0]["id"],
+      mapData[0]["title"],
+      mapData[0]["dateTimeString"],
+    );
   }
 
-  void clearReminders() async {
-    await _initPrefs();
-    _prefs.setBool(key, false);
-    _loadFromPrefs();
-    print("key set to false");
+  Future<void> clearReminderById(String id) async {
+    await DBHelper.deleteReminderFromDb(tableName, id);
     notifyListeners();
   }
 }

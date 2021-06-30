@@ -6,7 +6,7 @@ import '../models/reminder.dart';
 
 class ReminderProvider with ChangeNotifier {
   ReminderProvider() {
-    loadFromDb();
+    // loadFromDb();
   }
 
   String tableName = "reminder_table";
@@ -17,53 +17,32 @@ class ReminderProvider with ChangeNotifier {
   DateTime _dateTime;
   DateTime get dateTime => _dateTime;
 
-  // final dateFormat = DateFormat("EEEE, d'th' MMMM y").add_jm();
   final dateFormat = DateFormat("yyyy-MM-dd kk:mm:ss");
-  // DateTime _time;
-  // DateTime get time => _time;
 
-  // Future<void> _initPath() async {
-  //   if (file == null) {
-  //     try {
-  //       final directory = await getApplicationDocumentsDirectory();
-  //       file = File('${directory.path}/reminders.txt');
-  //     } catch (error) {
-  //       print("File Exception:- $error");
-  //     }
-  //   } else {
-  //     return;
+  // Future<dynamic> loadFromDb() async {
+  // final reminderData = await DBHelper.getData(tableName);
+  // final dateFormat = DateFormat("yyyy-MM-dd hh:mm:ss");
+  // final nowDateTime = DateTime.now();
+
+  // To clear out any reminders which were not deleted by the timer
+  // for (int i = 0; i < reminderData.length; i++) {
+  //   print("Reminder Object: ${reminderData[i]}");
+  //   DateTime reminderDateTime =
+  //       dateFormat.parse(reminderData[i]["dateTimeString"]);
+  //   print("Reminder Date Time in Reminder Provider: $reminderDateTime");
+  //   if (nowDateTime.isAfter(reminderDateTime)) {
+  //     clearReminderById(reminderData[i]["id"]);
   //   }
   // }
 
-  // Future<dynamic> loadFromFile() async {
-  //   await _initPath();
-  //   try {
-  //     String dateTimeString = await file.readAsString();
-  //     if (dateTimeString != null || dateTimeString != "") {
-  //       print("Reminder in File $dateTimeString");
-  //       _dateTime = dateFormat.parse(dateTimeString);
-  //       print("Parsed Reminder in Provider:- $dateTimeString");
-  //       return _dateTime;
-  //     } else {
-  //       print("File is empty");
-  //       return null;
-  //     }
-  //   } catch (error) {
-  //     print("Load File Exception:- $error");
+  // if (reminderData.isNotEmpty) {
+  //   for (int i = 0; i < reminderData.length; i++) {
+  //     print("Reminder DB Data: ${reminderData[i]["reminderTitle"]}");
   //   }
+  // } else {
+  //   return;
   // }
-
-  Future<dynamic> loadFromDb() async {
-    final reminderData = await DBHelper.getData(tableName);
-
-    if (reminderData.isNotEmpty) {
-      for (int i = 0; i < reminderData.length; i++) {
-        print("Reminder DB Data: ${reminderData[i]["reminderTitle"]}");
-      }
-    } else {
-      return;
-    }
-  }
+  // }
 
   void saveReminder(Reminder reminder, selectedDateTime) async {
     _dateTime = selectedDateTime;
@@ -79,15 +58,29 @@ class ReminderProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // Future<void> _saveToFile() async {
-  //   await _initPath();
-  //   // final dateTime = DateTime(
-  //   // final dateTimeText = _dateTime.toString();
-  //   await file.writeAsString(dateFormat.format(_dateTime).toString());
-  //   print('saved');
-  // }
+  Future<void> clearRedundantReminders() async {
+    final reminderData = await DBHelper.getData(tableName);
+    final dateFormat = DateFormat("yyyy-MM-dd HH:mm:ss");
+    // final dateFormat = DateFormat.yMMMd("en_US");
+    final nowDateTime = DateTime.now();
+
+    print("clearRedundantReminders Function called");
+
+    // To clear out any reminders which were not deleted by the timer
+    for (int i = 0; i < reminderData.length; i++) {
+      print("Reminder Object: ${reminderData[i]}");
+      DateTime reminderDateTime =
+          dateFormat.parse(reminderData[i]["dateTimeString"]);
+      print("Reminder Date Time in Reminder Provider: $reminderDateTime");
+      if (nowDateTime.isAfter(reminderDateTime)) {
+        print("Reminder CLEARED!");
+        clearReminderById(reminderData[i]["id"]);
+      }
+    }
+  }
 
   Future<Reminder> getReminderById(String id) async {
+    await clearRedundantReminders();
     final mapData = await DBHelper.getData(tableName, arg: id);
     print("Reminder ${mapData[0]["id"]} data from DB: ${mapData[0]}");
     return Reminder().toReminder(
@@ -100,5 +93,19 @@ class ReminderProvider with ChangeNotifier {
   Future<void> clearReminderById(String id) async {
     await DBHelper.deleteReminderFromDb(tableName, id);
     notifyListeners();
+  }
+
+  static int generateKeyId(String title) {
+    int keyId;
+    var sum = 0;
+    final titleCodeUnits = title.codeUnits;
+
+    for (int i = 0; i < titleCodeUnits.length; i++) {
+      sum += titleCodeUnits[i];
+    }
+
+    print("KeyId in Reminder Provider: $sum");
+    keyId = sum;
+    return keyId;
   }
 }

@@ -40,7 +40,7 @@ Future<void> main() async {
   // );
 
   AwesomeNotifications().initialize(
-    null,
+    "resource://mipmap/justnotes_icon",
     [
       NotificationChannel(
         channelKey: "JustNotes_Channel_1",

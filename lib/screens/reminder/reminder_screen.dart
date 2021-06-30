@@ -17,15 +17,6 @@ class ReminderScreen extends StatefulWidget {
 }
 
 class _ReminderScreenState extends State<ReminderScreen> {
-  // List isReminderAlreadySet;
-
-  // @override
-  // void initState() async {
-  //   super.initState();
-
-  //   isReminderAlreadySet = await flutterLocalNotificationsPlugin.pendingNotificationRequests();
-  //   print("isReminderAlreadySet:- $isReminderAlreadySet");
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -33,10 +24,6 @@ class _ReminderScreenState extends State<ReminderScreen> {
     final themeProvider = Provider.of<ThemeProvider>(context);
     final reminderProvider = Provider.of<ReminderProvider>(context);
     final notificationProvider = Provider.of<NotificationProvider>(context);
-
-    // if(isReminderAlreadySet == null || isReminderAlreadySet.isEmpty || isReminderAlreadySet == []) {
-    //   reminderProvider.clearReminders();
-    // }
 
     DateTime selectedDateTime;
     // DateTime date;
@@ -130,6 +117,7 @@ class _ReminderScreenState extends State<ReminderScreen> {
                   Reminder(
                     id: args.index,
                     title: args.title,
+                    desc: args.desc,
                     date: selectedDate,
                     time: selectedTime,
                   ),
@@ -180,6 +168,7 @@ class _ReminderScreenState extends State<ReminderScreen> {
         Reminder(
           id: args.index,
           title: args.title,
+          desc: args.desc,
           date: nowDateTime,
           time: nowTime,
         ),
@@ -213,10 +202,79 @@ class _ReminderScreenState extends State<ReminderScreen> {
         ),
         actions: <Widget>[
           IconButton(
+            splashRadius: 25,
+            tooltip: "Remove Reminder",
             icon: Icon(
-              Icons.ac_unit,
+              Icons.delete,
+              color: themeProvider.isDarkTheme
+                  ? Color(0xFFf44336)
+                  : Colors.red.shade700,
             ),
-            onPressed: () => reminderProvider.clearReminderById(args.index),
+            onPressed: () async {
+              return await showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  backgroundColor: themeProvider.isDarkTheme
+                      ? Color(0xFF424242)
+                      : Colors.white,
+                  title: Text(
+                    "Are you sure?",
+                    style: TextStyle(
+                      fontFamily: "Poppins",
+                      fontSize: 20,
+                      color: themeProvider.isDarkTheme
+                          ? Colors.white
+                          : Colors.black,
+                    ),
+                  ),
+                  content: Text(
+                    "Delete the Reminder?",
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.white,
+                    ),
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(false),
+                      style: TextButton.styleFrom(
+                        primary: Colors.grey.shade300,
+                      ),
+                      child: Text(
+                        "Cancel",
+                        style: TextStyle(
+                          fontFamily: "Poppins",
+                          fontSize: 14,
+                          color: themeProvider.isDarkTheme
+                              ? Colors.white
+                              : Colors.black,
+                        ),
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: () => notificationProvider.deleteNotification(
+                        context,
+                        ReminderProvider.generateKeyId(args.title),
+                        args.index,
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        primary: themeProvider.isDarkTheme
+                            ? Color(0xFFf44336)
+                            : Colors.red.shade700,
+                      ),
+                      child: Text(
+                        "Delete",
+                        style: TextStyle(
+                          fontFamily: "Poppins",
+                          fontSize: 14,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
           ),
         ],
         backgroundColor:
@@ -227,22 +285,16 @@ class _ReminderScreenState extends State<ReminderScreen> {
       body: FutureBuilder(
         future: reminderProvider.getReminderById(args.index),
         builder: (context, snapshot) {
-          // if (snapshot.hasData) {
-          //   print(
-          //       "Snapshot DateTimeString data from FutureBuilder: ${snapshot.data.dateTimeString}");
-          //   print("Snapshot Id data from FutureBuilder: ${snapshot.data.id}");
-          //   print(
-          //       "Snapshot Title data from FutureBuilder: ${snapshot.data.title}");
-          // }
           return Column(
             children: <Widget>[
               SizedBox(
-                height: 40,
+                height: 20,
               ),
               Container(
                 child: snapshot.hasData
                     ? ReminderCard(
                         id: snapshot.data.id,
+                        title: snapshot.data.title,
                         dateTime: snapshot.data.dateTimeString,
                         cardColor: themeProvider.isDarkTheme
                             ? Color(args.darkColor)
@@ -262,7 +314,7 @@ class _ReminderScreenState extends State<ReminderScreen> {
                     onTapFunction = customDateTime;
                   } else if (index == 1) {
                     text = "Remind me in 10 minutes";
-                    onTapFunction = () => addPredefinedReminder(2);
+                    onTapFunction = () => addPredefinedReminder(10);
                   } else if (index == 2) {
                     text = "Remind me in 15 minutes";
                     onTapFunction = () => addPredefinedReminder(15);

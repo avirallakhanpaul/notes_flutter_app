@@ -6,11 +6,13 @@ import '../../../providers/reminder_provider.dart';
 
 class ReminderCard extends StatefulWidget {
   final String id;
+  final String title;
   final String dateTime;
   final Color cardColor;
 
   ReminderCard({
     @required this.id,
+    this.title,
     @required this.dateTime,
     @required this.cardColor,
   });
@@ -22,8 +24,6 @@ class ReminderCard extends StatefulWidget {
 class _ReminderCardState extends State<ReminderCard> {
   final dateFormat = DateFormat("EEEE, d'th' MMMM y").add_jm();
   final stringConvertToDateFormat = DateFormat("yyyy-MM-dd hh:mm:ss");
-
-  // final timeFormat = DateFormat("jm");
 
   @override
   Widget build(BuildContext context) {
@@ -47,63 +47,51 @@ class _ReminderCardState extends State<ReminderCard> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return CircularProgressIndicator();
           } else {
-            return Card(
-              color: widget.cardColor,
-              margin: const EdgeInsets.only(
+            return Padding(
+              padding: const EdgeInsets.only(
                 top: 0,
+                bottom: 40.0,
                 left: 10,
                 right: 10,
-                bottom: 40,
               ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 12,
-                  horizontal: 20,
+              child: Card(
+                color: widget.cardColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Icon(
-                      Icons.notifications_outlined,
-                      size: 45,
-                      color: Colors.white,
-                    ),
-                    Flexible(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Text(
-                            formattedDate,
-                            // "No Reminder",
-                            style: TextStyle(
-                              fontFamily: "Poppins",
-                              fontSize: 22,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w700,
-                              letterSpacing: 0.66,
-                            ),
-                          ),
-                          SizedBox(
-                            height: 5,
-                          ),
-                          // Text(
-                          //   formattedTime.toString(),
-                          //   style: TextStyle(
-                          //     fontFamily: "Poppins",
-                          //     fontSize: 22,
-                          //     color: Colors.white,
-                          //     fontWeight: FontWeight.w700,
-                          //     letterSpacing: 0.66,
-                          //   ),
-                          // ),
-                        ],
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 10,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Icon(
+                        Icons.notifications_outlined,
+                        size: 40,
+                        color: Colors.white,
                       ),
-                    ),
-                  ],
+                      SizedBox(
+                        width: 20,
+                      ),
+                      Flexible(
+                        child: Text(
+                          formattedDate,
+                          // "No Reminder",
+                          style: TextStyle(
+                            fontFamily: "Poppins",
+                            fontSize: 20,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 0.66,
+                            height: 1.3,
+                            // height: 1.2,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             );

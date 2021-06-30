@@ -88,7 +88,7 @@ class _RootPageState extends State<RootPage> {
 
   void switchToSettings() {
     setState(() {
-      _authStatus = AuthStatus.settings;          
+      _authStatus = AuthStatus.settings;
     });
   }
 

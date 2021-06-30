@@ -207,14 +207,15 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           ),
           floatingActionButton: FloatingActionButton(
             onPressed: () => noteProvider.addNote(context: context),
-            elevation: 5,
+            materialTapTargetSize: MaterialTapTargetSize.padded,
+          elevation: 10,
             tooltip: "Add a note",
             backgroundColor: theme.isDarkTheme
             ? Color(0xFF64B5F6)
             : Color(0xFF2196F3),
             child: Icon(
               Icons.add,
-              color: Colors.white,
+              color: theme.isDarkTheme ? Color(0xFF121212) : Colors.white,
               size: 30,
             ),
           ),

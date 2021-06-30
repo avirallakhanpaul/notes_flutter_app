@@ -161,8 +161,7 @@ class _NoteScreenState extends State<NoteScreen> {
               : Color(note.lightColor),
               leading: IconButton(
                 icon: Icon(
-                  Icons.arrow_back_ios,
-                  size: 20,
+                  Icons.arrow_back, size: 25,
                   color: Colors.white
                 ),
                 splashRadius: 25,

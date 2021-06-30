@@ -17,13 +17,14 @@ class ReminderScreen extends StatefulWidget {
 }
 
 class _ReminderScreenState extends State<ReminderScreen> {
-
   @override
   Widget build(BuildContext context) {
     final Args args = ModalRoute.of(context).settings.arguments;
     final themeProvider = Provider.of<ThemeProvider>(context);
     final reminderProvider = Provider.of<ReminderProvider>(context);
     final notificationProvider = Provider.of<NotificationProvider>(context);
+
+    bool hasData;
 
     DateTime selectedDateTime;
     // DateTime date;
@@ -200,6 +201,16 @@ class _ReminderScreenState extends State<ReminderScreen> {
                 : Colors.black,
           ),
         ),
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: themeProvider.isDarkTheme ? Colors.white : Colors.black,
+            size: 25,
+          ),
+          onPressed: () => Navigator.pop(context),
+          splashRadius: 25,
+          tooltip: "Back",
+        ),
         actions: <Widget>[
           IconButton(
             splashRadius: 25,
@@ -285,6 +296,11 @@ class _ReminderScreenState extends State<ReminderScreen> {
       body: FutureBuilder(
         future: reminderProvider.getReminderById(args.index),
         builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            hasData = true;
+          } else {
+            hasData = false;
+          }
           return Column(
             children: <Widget>[
               SizedBox(
@@ -324,7 +340,7 @@ class _ReminderScreenState extends State<ReminderScreen> {
                       Card(
                         key: UniqueKey(),
                         margin: EdgeInsets.symmetric(
-                          horizontal: 10,
+                          horizontal: 15,
                         ),
                         elevation: 0.0,
                         color: themeProvider.isDarkTheme
@@ -352,7 +368,22 @@ class _ReminderScreenState extends State<ReminderScreen> {
                                   : Colors.black,
                             ),
                           ),
-                          onTap: onTapFunction,
+                          onTap: () {
+                            if (hasData) {
+                              return Fluttertoast.showToast(
+                                msg: "Only 1 reminder can be added",
+                                fontSize: 16,
+                                gravity: ToastGravity.SNACKBAR,
+                                toastLength: Toast.LENGTH_SHORT,
+                                backgroundColor: themeProvider.isDarkTheme
+                                    ? Color(0xFFf44336)
+                                    : Colors.red.shade700,
+                                textColor: Colors.white,
+                              );
+                            } else {
+                              onTapFunction();
+                            }
+                          },
                         ),
                       ),
                       SizedBox(

@@ -53,8 +53,11 @@ class SettingsScreen extends StatelessWidget {
                   color: theme.isDarkTheme
                   ? Colors.white
                   : Colors.black,
+                  size: 25,
                 ),
                 onPressed: toHomeFunction,
+                splashRadius: 25,
+              tooltip: "Back",
               ),
             ),
             backgroundColor: theme.isDarkTheme

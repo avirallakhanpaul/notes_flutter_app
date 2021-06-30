@@ -51,8 +51,8 @@ class _ReminderCardState extends State<ReminderCard> {
               padding: const EdgeInsets.only(
                 top: 0,
                 bottom: 40.0,
-                left: 10,
-                right: 10,
+                left: 15,
+                right: 15,
               ),
               child: Card(
                 color: widget.cardColor,

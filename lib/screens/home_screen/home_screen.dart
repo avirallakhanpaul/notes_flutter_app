@@ -1,6 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import "package:flutter/material.dart";
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:notes_app/screens/home_screen/widgets/cutom_floating_button.dart';
 import 'package:provider/provider.dart';
 
 import "./widgets/note_card.dart";
@@ -205,20 +206,21 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             centerTitle: true,
             elevation: 0,
           ),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () => noteProvider.addNote(context: context),
-            materialTapTargetSize: MaterialTapTargetSize.padded,
-          elevation: 10,
-            tooltip: "Add a note",
-            backgroundColor: theme.isDarkTheme
-            ? Color(0xFF64B5F6)
-            : Color(0xFF2196F3),
-            child: Icon(
-              Icons.add,
-              color: theme.isDarkTheme ? Color(0xFF121212) : Colors.white,
-              size: 30,
-            ),
-          ),
+          floatingActionButton: CustomFloatingButton(),
+        // FloatingActionButton(
+        //   onPressed: () => noteProvider.addNote(context: context),
+        //   materialTapTargetSize: MaterialTapTargetSize.padded,
+        // elevation: 10,
+        //   tooltip: "Add a note",
+        //   backgroundColor: theme.isDarkTheme
+        //   ? Color(0xFF64B5F6)
+        //   : Color(0xFF2196F3),
+        //   child: Icon(
+        //   Icons.add,
+        //   color: theme.isDarkTheme ? Color(0xFF121212) : Colors.white,
+        //     size: 35,
+        //   ),
+        // ),
           floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
           backgroundColor: theme.isDarkTheme
             ? Color(0xFF121212) 

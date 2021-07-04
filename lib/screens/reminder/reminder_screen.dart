@@ -181,8 +181,6 @@ class _ReminderScreenState extends State<ReminderScreen> {
         gravity: ToastGravity.SNACKBAR,
         toastLength: Toast.LENGTH_SHORT,
       );
-      print(
-          "Predefined Interval in Reminder Screen: ${(minutes * 60) - nowDateTime.second}");
     }
 
     return Scaffold(
@@ -345,7 +343,7 @@ class _ReminderScreenState extends State<ReminderScreen> {
                         elevation: 0.0,
                         color: themeProvider.isDarkTheme
                             ? Colors.white.withOpacity(0.1)
-                            : Colors.black.withOpacity(0.05),
+                            : Colors.black.withOpacity(0.1),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
@@ -362,7 +360,8 @@ class _ReminderScreenState extends State<ReminderScreen> {
                             style: TextStyle(
                               fontFamily: "Poppins",
                               fontSize: 18,
-                              fontWeight: FontWeight.w300,
+                              fontWeight: FontWeight.w500,
+                              letterSpacing: 0.6,
                               color: themeProvider.isDarkTheme
                                   ? Colors.white.withOpacity(0.9)
                                   : Colors.black,

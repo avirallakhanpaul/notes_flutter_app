@@ -80,7 +80,7 @@ class SettingsScreen extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: theme.isDarkTheme
                         ? Colors.white.withOpacity(0.1)
-                        : Colors.black.withOpacity(0.05),
+                        : Colors.black.withOpacity(0.1),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -101,7 +101,7 @@ class SettingsScreen extends StatelessWidget {
                           Text(
                             "Aviral Lakhanpaul",
                             style: TextStyle(
-                              fontSize: 16,
+                              fontSize: 18,
                               fontWeight: FontWeight.w500,
                               color: Color(0xFF2196F3),
                             ),
@@ -121,7 +121,7 @@ class SettingsScreen extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: theme.isDarkTheme
                         ? Colors.white.withOpacity(0.1)
-                        : Colors.black.withOpacity(0.05),
+                        : Colors.black.withOpacity(0.1),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -142,7 +142,7 @@ class SettingsScreen extends StatelessWidget {
                           Text(
                             userMail,
                             style: TextStyle(
-                              fontSize: 16,
+                              fontSize: 18,
                               fontWeight: FontWeight.w500,
                               color: Color(0xFF2196F3),
                             ),
@@ -162,7 +162,7 @@ class SettingsScreen extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: theme.isDarkTheme
                         ? Colors.white.withOpacity(0.1)
-                        : Colors.black.withOpacity(0.05),
+                        : Colors.black.withOpacity(0.1),
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,                  
